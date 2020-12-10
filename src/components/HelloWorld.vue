@@ -1,58 +1,91 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div class="container">
+    <h1>Value Stream Comparative Analysis</h1>
+    <div id="div-budget">
+      <b-input-group prepend="Budget ($)" class="mt-3">
+        <b-form-input v-model="budget"> {{ this.budget }}</b-form-input>
+      </b-input-group>
+    </div>
+    <div class="bordered-div">
+      <div class="bordered-div">
+        <h2>Outcome 1</h2>
+        <hr />
+        <b-form-group
+          label="Outcome 1 Funding"
+          label-for="bg-opacity"
+          label-cols-sm="4"
+          label-cols-lg="12"
+        >
+          <b-input-group>
+            <b-form-input
+              id="bg-opacity"
+              v-model="outcome1Funding"
+              type="range"
+              number
+              min="0"
+              :max="budget"
+              step="0.01"
+            ></b-form-input>
+            <b-input-group-append is-text class="text-monospace">
+              {{ outcome1Funding }}
+            </b-input-group-append>
+          </b-input-group>
+            <b-input-group prepend="Improvement ratio" append="%">
+              <b-form-input v-model="computeOutcome1" readonly></b-form-input>
+            </b-input-group>
+        </b-form-group>
+        <hr />
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
+  name: "HelloWorld",
   props: {
-    msg: String
+    msg: String,
+  },
+  methods: {
+    init() {
+      this.outcome1Funding = this.budget/2
+    }
+  },
+  data () {
+      return {
+        budget: 100,
+        outcome1Funding: 0
+      }
+    },
+  computed: {
+    computeOutcome1 : function()  {
+        var x = this.outcome1Funding
+        var output = x/(1+Math.abs(x))
+        return output
+    }  
+  },
+  mounted() {
+    this.init()
   }
-}
+};
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
+h1 {
+  margin-top: 15px;
+  margin-bottom: 20px;
 }
-ul {
-  list-style-type: none;
-  padding: 0;
+#div-budget {
+  margin-top: 10px;
 }
-li {
-  display: inline-block;
-  margin: 0 10px;
+.bordered-div {
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  padding: 20px;
 }
-a {
-  color: #42b983;
+.progress {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 </style>

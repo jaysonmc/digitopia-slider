@@ -1,4 +1,4 @@
-# digitopia-slider-v2
+# Gigitopia Slider Example
 
 ## Project setup
 ```
