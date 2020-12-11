@@ -5,7 +5,7 @@
       <b-input-group prepend="Budget ($)" append="million" class="mt-3">
         <b-form-input v-model="budget"> {{ this.budget }}</b-form-input>
       </b-input-group>
-      <b-input-group prepend="Total spent ($)" append="million" class="mt-3">
+      <b-input-group id="totalSpent" prepend="Total spent ($)" append="million" class="mt-3">
         <b-form-input v-model="totalSpent" readonly> {{}}</b-form-input>
       </b-input-group>
       <budget-slider
@@ -93,5 +93,8 @@ export default {
 h1 {
   margin-top: 15px;
   margin-bottom: 20px;
+}
+#totalSpent {
+  margin-bottom: 10px;
 }
 </style>
