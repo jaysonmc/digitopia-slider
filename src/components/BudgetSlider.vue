@@ -12,7 +12,7 @@
           <b-input-group>
             <b-form-input
               id="bg-opacity"
-              v-model="outcome1Funding"
+              v-model="outcomeFunding"
               type="range"
               number
               min="0"
@@ -20,11 +20,11 @@
               step="0.01"
             ></b-form-input>
             <b-input-group-append is-text class="text-monospace">
-              {{ outcome1Funding }} million
+              {{ outcomeFunding }} million
             </b-input-group-append>
           </b-input-group>
             <b-input-group prepend="Improvement ratio" append="%">
-              <b-form-input v-model="computeOutcome1" readonly></b-form-input>
+              <b-form-input v-model="computeOutcome" readonly></b-form-input>
             </b-input-group>
         </b-form-group>
         <hr />
@@ -40,15 +40,16 @@ export default {
     budget: Number,
     vs: Number,
     hs: Number,
+    index: Number,
   },
   methods: {
     
     init() {
-      this.outcome1Funding = this.budget/2
+      this.outcomeFunding = this.budget/2
     },
     tanh() {
 
-      let x = this.outcome1Funding
+      let x = this.outcomeFunding
       let vs = this.vs
       let hs = this.hs
 
@@ -59,14 +60,20 @@ export default {
   
   data () {
       return {
-        outcome1Funding: 0
+        outcomeFunding: 0
       }
     },
   computed: {
-    computeOutcome1 : function()  {
-        var x = this.outcome1Funding
-        var output = this.tanh(x, 0.05)
-        return output
+    computeOutcome : function()  {
+        let computedOutcome = this.tanh()
+
+        var retObj = {
+          computedOutcome: computedOutcome,
+          index: this.index
+        }
+
+        this.$emit('computed-outcome', retObj)
+        return computedOutcome
     }  
   },
   mounted() {
