@@ -128,4 +128,7 @@ export default {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+.form-group .input-group-prepend .input-group-text {
+  width: 165px;
+}
 </style>
