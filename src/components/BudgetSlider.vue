@@ -3,13 +3,11 @@
       <div class="bordered-div">
         <h2>{{this.title}}</h2>
         <hr />
-        <b-form-group
-          label="Funding"
-          label-for="bg-opacity"
-          label-cols-sm="4"
-          label-cols-lg="12"
-        >
+        <b-form-group>
           <b-input-group>
+            <b-input-group-prepend is-text class="text-monospace">
+              Funding
+            </b-input-group-prepend>
             <b-form-input
               id="bg-opacity"
               v-model="outcomeFunding"
@@ -18,6 +16,7 @@
               min="0"
               :max="budget"
               step="0.01"
+              @change="computeBudget"
             ></b-form-input>
             <b-input-group-append is-text class="text-monospace">
               {{ outcomeFunding }} million
@@ -27,7 +26,6 @@
               <b-form-input v-model="computeOutcome" readonly></b-form-input>
             </b-input-group>
         </b-form-group>
-        <hr />
       </div>
     </div>
 </template>
@@ -41,11 +39,12 @@ export default {
     vs: Number,
     hs: Number,
     index: Number,
+    totalOutcomes: Number,
   },
   methods: {
     
     init() {
-      this.outcomeFunding = this.budget/2
+      this.outcomeFunding = (this.budget/this.totalOutcomes).toFixed(2)
     },
     tanh() {
 
@@ -55,6 +54,15 @@ export default {
 
       const reVal = (hs * ( (Math.exp(vs*x)-1) / (Math.exp(vs*x)+1) ))
       return reVal
+    },
+    computeBudget: function() {
+
+      var retObj = {
+        outcomeFunding: this.outcomeFunding,
+        index: this.index
+      }
+
+      this.$emit('compute-budget', retObj)
     }
   },
   
@@ -74,7 +82,7 @@ export default {
 
         this.$emit('computed-outcome', retObj)
         return computedOutcome
-    }  
+    }
   },
   mounted() {
     this.init()
