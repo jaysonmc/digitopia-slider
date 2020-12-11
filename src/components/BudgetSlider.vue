@@ -10,13 +10,13 @@
             </b-input-group-prepend>
             <b-form-input
               id="bg-opacity"
-              v-model="outcomeFunding"
+              :value="outcomeFunding"
               type="range"
               number
               min="0"
               :max="budget"
               step="0.01"
-              @change="computeBudget"
+              @change="computeBudget(outcomeFunding, $event)"
             ></b-form-input>
             <b-input-group-append is-text class="text-monospace">
               {{ outcomeFunding }} million
@@ -43,11 +43,9 @@ export default {
     hs: Number,
     index: Number,
     totalOutcomes: Number,
+    outcomeFunding: Number,
   },
   methods: {
-    init() {
-      this.outcomeFunding = (this.budget/this.totalOutcomes).toFixed(2)
-    },
     tanh() {
 
       let x = this.outcomeFunding
@@ -77,40 +75,31 @@ export default {
 
       return hs * (quotientRuleNumerator / quotientRuleDenominator)
     },
-    computeBudget: function() {
+    computeBudget: function(oldVal, newVal) {
 
       var retObj = {
-        outcomeFunding: this.outcomeFunding,
+        oldOutcomeFunding: oldVal,
+        newOutcomeFunding: newVal,
         index: this.index
       }
 
       this.$emit('compute-budget', retObj)
     }
   },
-  data () {
-      return {
-        outcomeFunding: 0
-      }
-    },
   computed: {
     computeOutcome : function()  {
-        let computedOutcome = this.tanh()
-
         var retObj = {
-          computedOutcome: computedOutcome,
+          computedOutcome: this.tanh(),
           index: this.index
         }
 
         this.$emit('computed-outcome', retObj)
-        return computedOutcome
+        return retObj.computedOutcome
     },
     rateOfChange: function() {
       return this.tanhPrime()
     }
   },
-  mounted() {
-    this.init()
-  }
 };
 </script>
 
