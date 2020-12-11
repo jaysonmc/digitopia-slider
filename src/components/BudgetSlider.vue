@@ -10,7 +10,7 @@
             </b-input-group-prepend>
             <b-form-input
               id="bg-opacity"
-              :value="outcomeFunding"
+              :value="parseInt(outcomeFunding).toFixed(2)"
               type="range"
               number
               min="0"

@@ -53,7 +53,7 @@ export default {
   methods: {
     init() {
       this.outcomes = this.outcomes.map((item) => {
-        item.outcomeBudget = (this.budget / this.outcomes.length).toFixed(2);
+        item.outcomeBudget = (this.budget / this.outcomes.length)
         return item;
       });
     },
@@ -63,22 +63,29 @@ export default {
     computeSpent(retObj) {
       this.outcomes[retObj.index].outcomeBudget = retObj.newOutcomeFunding;
 
+      console.log("retObj.newOutcomeFunding = " + retObj.newOutcomeFunding)
+      console.log("retObj.oldOutcomeFunding = " + retObj.oldOutcomeFunding)
+
       if (this.freezeSpending == "frozen") {
         this.adjustBudgets(this.outcomes[retObj.index], (retObj.oldOutcomeFunding - retObj.newOutcomeFunding) )
       }
 
     },
     adjustBudgets(adjustedOutcome, difference) {
-      let diffVal = Math.abs(difference/this.outcomes.length)
+      let diffVal = Math.abs(difference/ (this.outcomes.length-1) )
     
+      console.log("diffVal = " + diffVal)
+      console.log("difference = " + difference)
+
       this.outcomes.forEach(outcome => {
 
         console.log("iterating over " + outcome.title)  
         if (outcome.title == adjustedOutcome.title) {
-          console.log("outcome.title == adjustedOutcome.title") 
-          console.log(outcome.title + " == " + adjustedOutcome.title)
+          //console.log("outcome.title == adjustedOutcome.title") 
+          //console.log(outcome.title + " == " + adjustedOutcome.title)
+          return
         } else {
-          console.log("else ... ")
+          //console.log("else ... ")
           outcome.outcomeBudget = (outcome.outcomeBudget - diffVal)
           outcome.key = parseInt(adjustedOutcome.key) + outcome.key
           
