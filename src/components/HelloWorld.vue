@@ -61,37 +61,30 @@ export default {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
     computeSpent(retObj) {
-      this.outcomes[retObj.index].outcomeBudget = retObj.newOutcomeFunding;
 
-      console.log("retObj.newOutcomeFunding = " + retObj.newOutcomeFunding)
-      console.log("retObj.oldOutcomeFunding = " + retObj.oldOutcomeFunding)
+      let newVal = retObj.newOutcomeFunding
+      let oldVal = retObj.oldOutcomeFunding
+
+      this.outcomes[retObj.index].outcomeBudget = retObj.newOutcomeFunding
+
+      console.log("newVal = " + newVal)
+      console.log("oldVal = " + oldVal)
 
       if (this.freezeSpending == "frozen") {
-        this.adjustBudgets(this.outcomes[retObj.index], (retObj.oldOutcomeFunding - retObj.newOutcomeFunding) )
+
+        this.adjustBudgets(this.outcomes[retObj.index], (newVal - oldVal) )
       }
 
     },
     adjustBudgets(adjustedOutcome, difference) {
-      let diffVal = Math.abs(difference/ (this.outcomes.length-1) )
-    
-      console.log("diffVal = " + diffVal)
-      console.log("difference = " + difference)
-
+      let diffVal = difference/ (this.outcomes.length-1)
+  
       this.outcomes.forEach(outcome => {
-
-        console.log("iterating over " + outcome.title)  
-        if (outcome.title == adjustedOutcome.title) {
-          //console.log("outcome.title == adjustedOutcome.title") 
-          //console.log(outcome.title + " == " + adjustedOutcome.title)
-          return
-        } else {
-          //console.log("else ... ")
+        if (outcome.title != adjustedOutcome.title) {
           outcome.outcomeBudget = (outcome.outcomeBudget - diffVal)
           outcome.key = parseInt(adjustedOutcome.key) + outcome.key
-          
-        }
+        } 
       })
-      console.dir(this.outcomes)
     }
   },
   data() {
