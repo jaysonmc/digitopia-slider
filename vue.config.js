@@ -1,3 +1,5 @@
 module.exports = {
-  publicPath: '/digitopia-slider/'
+  publicPath: process.env.NODE_ENV === 'production'
+    ? '/digitopia-slider/'
+    : '/'
 }
