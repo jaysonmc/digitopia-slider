@@ -1,3 +1,3 @@
 module.exports = {
-  publicPath: '/digitopia-slider-v2/'
+  publicPath: '/digitopia-slider/'
 }
