@@ -25,7 +25,7 @@
           <b-input-group prepend="Improvement ratio" append="%">
             <b-form-input v-model="computeOutcome" readonly></b-form-input>
           </b-input-group>
-          <b-input-group prepend="Rate of change">
+          <b-input-group  v-if="showAnalysis" prepend="Rate of change">
             <b-form-input v-model="rateOfChange" readonly></b-form-input>
           </b-input-group>
         </b-form-group>
@@ -44,6 +44,11 @@ export default {
     index: Number,
     totalOutcomes: Number,
     outcomeFunding: Number,
+  },
+  data() {
+    return {
+      showAnalysis: false
+    }
   },
   methods: {
     tanh() {
@@ -84,6 +89,11 @@ export default {
       }
 
       this.$emit('compute-budget', retObj)
+    },
+    setAnalysis(bool) {
+      this.showAnalysis = bool
+
+      console.log("this.showAnalysis = " + this.showAnalysis)
     }
   },
   computed: {

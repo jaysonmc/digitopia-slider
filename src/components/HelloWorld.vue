@@ -24,8 +24,21 @@
           Freeze spending
         </b-form-checkbox>
       </div>
+      <div class="row checkbox-div">
+        <b-form-checkbox
+          id="checkbox-analysis"
+          v-model="showAnalysis"
+          name="checkbox-analysis"
+          value="analysis"
+          unchecked-value="no_analysis"
+          @change="setAnalysis()"
+        >
+          Analysis
+        </b-form-checkbox>
+      </div>
       <budget-slider
         v-for="(item, index) in this.outcomes"
+        ref="slider"
         :key="item.key"
         :title="item.title"
         :budget="parseInt(budget)"
@@ -38,7 +51,6 @@
         @computed-outcome="computedOutcome"
       />
     </div>
-    {{this.outcomes}}
   </div>
 </template>
 
@@ -67,9 +79,6 @@ export default {
 
       this.outcomes[retObj.index].outcomeBudget = retObj.newOutcomeFunding
 
-      console.log("newVal = " + newVal)
-      console.log("oldVal = " + oldVal)
-
       if (this.freezeSpending == "frozen") {
 
         this.adjustBudgets(this.outcomes[retObj.index], (newVal - oldVal) )
@@ -84,6 +93,12 @@ export default {
           outcome.outcomeBudget = (outcome.outcomeBudget - diffVal)
           outcome.key = parseInt(adjustedOutcome.key) + outcome.key
         } 
+      })
+    },
+    setAnalysis() {
+      this.$refs.slider.forEach(component => {
+        if(this.showAnalysis == "analysis") component.setAnalysis(true)
+        else component.setAnalysis(false)
       })
     }
   },
@@ -117,6 +132,7 @@ export default {
       ],
       budget: 100,
       freezeSpending: "not_frozen",
+      showAnalysis: "no_analysis",
     };
   },
   computed: {
@@ -140,11 +156,10 @@ h1 {
   margin-bottom: 20px;
 }
 #totalSpent {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
 }
 .checkbox-div {
   margin-left: 0px;
-  margin-top: 15px;
   height: 40px;
 }
 </style>
