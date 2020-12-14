@@ -22,7 +22,7 @@
               {{ outcomeFunding }} million
             </b-input-group-append>
           </b-input-group>
-          <b-input-group prepend="Improvement ratio" append="%">
+          <b-input-group v-if="showAnalysis" prepend="Improvement ratio" append="%">
             <b-form-input v-model="computeOutcome" readonly></b-form-input>
           </b-input-group>
           <b-input-group  v-if="showAnalysis" prepend="Rate of change">
