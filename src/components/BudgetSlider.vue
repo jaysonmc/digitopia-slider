@@ -22,20 +22,39 @@
               {{ outcomeFunding }} million
             </b-input-group-append>
           </b-input-group>
-          <b-input-group v-if="showAnalysis" prepend="Improvement ratio" append="%">
+          <b-input-group v-if="showAnalysis" prepend="Improved by" append="%">
             <b-form-input v-model="computeOutcome" readonly></b-form-input>
           </b-input-group>
           <b-input-group  v-if="showAnalysis" prepend="Rate of change">
             <b-form-input v-model="rateOfChange" readonly></b-form-input>
           </b-input-group>
+          <div v-if='outcomeFunding'> 
+            <sub-budget-slider 
+              v-for="(item, index) in this.subOutcomes"
+              :key="item.key"
+              :outcomeFunding="outcomeFunding"
+              :subOutcomeFunding="item.subOutcomeFunding"
+              :oneOf="subOutcomes.length"
+              :title="item.title"
+              :index="index"
+              @compute-sub-budgets="computeSubBudgets"
+              ref="subslider"
+            >
+            </sub-budget-slider>
+          </div>
         </b-form-group>
       </div>
     </div>
 </template>
 
 <script>
+import SubBudgetSlider from "./SubBudgetSlider.vue";
+
 export default {
   name: "BudgetSlider",
+  components: {
+    SubBudgetSlider,
+  },
   props: {
     title: String,
     budget: Number,
@@ -47,7 +66,19 @@ export default {
   },
   data() {
     return {
-      showAnalysis: false
+      showAnalysis: false,
+      subOutcomes: [
+        {
+          title: "Suboutcome 1",
+          key: 1,
+          subOutcomeFunding: undefined,
+        },
+        {
+          title: "Suboutcome 2",
+          key: 2,
+          subOutcomeFunding: undefined,
+        },
+      ]
     }
   },
   methods: {
@@ -92,8 +123,27 @@ export default {
     },
     setAnalysis(bool) {
       this.showAnalysis = bool
+    },
+    computeSubBudgets(retObj) {
 
-      console.log("this.showAnalysis = " + this.showAnalysis)
+      const adjustedSubOutcome = this.subOutcomes[retObj.index]
+
+      const newVal = retObj.newOutcomeFunding
+      const oldVal = retObj.oldOutcomeFunding
+
+      const difference = (newVal - oldVal)
+      const budgetDelta = (difference / (this.subOutcomes.length - 1))
+
+      this.subOutcomes.map( suboutcome => {
+
+        suboutcome.key += adjustedSubOutcome.key
+
+        if (adjustedSubOutcome.title === suboutcome.title) {
+          return
+        }
+        
+        suboutcome.subOutcomeFunding += budgetDelta
+      })
     }
   },
   computed: {
@@ -104,12 +154,17 @@ export default {
         }
 
         this.$emit('computed-outcome', retObj)
-        return retObj.computedOutcome
+        return (retObj.computedOutcome * 100).toFixed(2)
     },
     rateOfChange: function() {
       return this.tanhPrime()
     }
   },
+  updated() {      
+    this.subOutcomes.map( suboutcome => {
+      suboutcome.subOutcomeFunding = this.$props.outcomeFunding / this.subOutcomes.length
+    })
+  }
 };
 </script>
 

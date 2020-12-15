@@ -106,15 +106,15 @@ export default {
     return {
       outcomes: [
         {
-          title: "Outcome 1",
+          title: "Reconciliation",
           computedOutcome: null,
           verticalScaleValue: 0.05,
           horizontalScaleValue: 1,
           outcomeBudget: undefined,
-          key: 1
+          key: 1,
         },
         {
-          title: "Outcome 2",
+          title: "Diversity and inclusion",
           computedOutcome: null,
           verticalScaleValue: 0.1,
           horizontalScaleValue: 1,
@@ -122,7 +122,7 @@ export default {
           key: 2
         },
         {
-          title: "Outcome 3",
+          title: "Climate",
           computedOutcome: null,
           verticalScaleValue: 0.01,
           horizontalScaleValue: 1,
