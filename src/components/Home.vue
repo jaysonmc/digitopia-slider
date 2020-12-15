@@ -80,7 +80,6 @@ export default {
       this.outcomes[retObj.index].outcomeBudget = retObj.newOutcomeFunding
 
       if (this.freezeSpending == "frozen") {
-
         this.adjustBudgets(this.outcomes[retObj.index], (newVal - oldVal) )
       }
 

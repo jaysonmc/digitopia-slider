@@ -70,12 +70,12 @@ export default {
       subOutcomes: [
         {
           title: "Suboutcome 1",
-          key: 1,
+          key: "1",
           subOutcomeFunding: undefined,
         },
         {
           title: "Suboutcome 2",
-          key: 2,
+          key: "2",
           subOutcomeFunding: undefined,
         },
       ]
@@ -125,24 +125,21 @@ export default {
       this.showAnalysis = bool
     },
     computeSubBudgets(retObj) {
-
-      const adjustedSubOutcome = this.subOutcomes[retObj.index]
-
       const newVal = retObj.newOutcomeFunding
       const oldVal = retObj.oldOutcomeFunding
 
       const difference = (newVal - oldVal)
-      const budgetDelta = (difference / (this.subOutcomes.length - 1))
+      const budgetDelta = (difference / (this.subOutcomes.length - 1))      
 
-      this.subOutcomes.map( suboutcome => {
+      let adjustedOutcome = this.subOutcomes[retObj.index]
+      adjustedOutcome.subOutcomeFunding = newVal
 
-        suboutcome.key += adjustedSubOutcome.key
-
-        if (adjustedSubOutcome.title === suboutcome.title) {
-          return
+      this.subOutcomes.forEach(suboutcome => {
+        if (adjustedOutcome.key != suboutcome.key) {
+          suboutcome.subOutcomeFunding = (suboutcome.subOutcomeFunding - budgetDelta)
         }
-        
-        suboutcome.subOutcomeFunding += budgetDelta
+
+        suboutcome.key = suboutcome.key + adjustedOutcome.key
       })
     }
   },
@@ -161,8 +158,10 @@ export default {
     }
   },
   updated() {      
+    
     this.subOutcomes.map( suboutcome => {
-      suboutcome.subOutcomeFunding = this.$props.outcomeFunding / this.subOutcomes.length
+      if (!suboutcome.subOutcomeFunding)
+        suboutcome.subOutcomeFunding = this.$props.outcomeFunding / this.subOutcomes.length
     })
   }
 };

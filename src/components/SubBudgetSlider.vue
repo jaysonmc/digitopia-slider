@@ -39,12 +39,9 @@ export default {
 
       var retObj = {
         oldOutcomeFunding: this.subOutcomeFunding,
-        newOutcomeFunding: newVal,
+        newOutcomeFunding: parseFloat(newVal),
         index: this.index
       }
-
-      console.dir(retObj)
-
       this.$emit('compute-sub-budgets', retObj)
     },
   },
