@@ -1,7 +1,7 @@
 <template>
   <div class="bordered-div">
       <div class="bordered-div">
-        <h2>{{this.title}}</h2>
+        <h2>{{title}}</h2>
         <hr />
         <b-form-group>
           <b-input-group>
@@ -10,16 +10,16 @@
             </b-input-group-prepend>
             <b-form-input
               id="bg-opacity"
-              :value="parseInt(outcomeFunding).toFixed(2)"
+              :value="parseInt(outcomeBudget).toFixed(2)"
               type="range"
               number
               min="0"
               :max="budget"
               step="0.01"
-              @change="computeBudget(outcomeFunding, $event)"
+              @change="computeBudget(outcomeBudget, $event)"
             ></b-form-input>
             <b-input-group-append is-text class="text-monospace">
-              {{ outcomeFunding }} million
+              {{ parseFloat(outcomeBudget).toFixed(2) }} million
             </b-input-group-append>
           </b-input-group>
           <b-input-group v-if="showAnalysis" prepend="Improved by" append="%">
@@ -56,17 +56,28 @@ export default {
     SubBudgetSlider,
   },
   props: {
-    title: String,
     budget: Number,
-    vs: Number,
-    hs: Number,
     index: Number,
     totalOutcomes: Number,
-    outcomeFunding: Number,
+    outcomeProp : 
+    {
+      title: String,
+      outcomeBudget: Number,  
+      verticalScaleValue: Number,
+      horizontalScaleValue: Number,
+      computedOutcome: null | Number,
+      key: Number,
+    }
   },
   data() {
     return {
+      title: this.outcomeProp.title,
+      outcomeBudget: this.outcomeProp.outcomeBudget, //
+      vs: this.outcomeProp.verticalScaleValue,
+      hs: this.outcomeProp.horizontalScaleValue,
       showAnalysis: false,
+      outcome: this.outcomeProp,
+      
       subOutcomes: [
         {
           title: "Suboutcome 1",
@@ -113,6 +124,12 @@ export default {
     },
     computeBudget: function(oldVal, newVal) {
 
+      this.outcomeBudget = newVal
+
+      console.log("outcomeFunding = " + this.outcomeFunding)
+      console.log(oldVal)
+      console.log(newVal)
+
       var retObj = {
         oldOutcomeFunding: oldVal,
         newOutcomeFunding: newVal,
@@ -157,8 +174,12 @@ export default {
       return this.tanhPrime()
     }
   },
+  mounted() {
+    if (!this.outcomeProp.outcomeBudget) {
+      this.outcomeBudget = this.budget / this.totalOutcomes
+    }
+  },
   updated() {      
-    
     this.subOutcomes.map( suboutcome => {
       if (!suboutcome.subOutcomeFunding)
         suboutcome.subOutcomeFunding = this.$props.outcomeFunding / this.subOutcomes.length

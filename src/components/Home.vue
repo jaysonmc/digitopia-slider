@@ -40,13 +40,10 @@
         v-for="(item, index) in this.outcomes"
         ref="slider"
         :key="item.key"
-        :title="item.title"
-        :budget="parseInt(budget)"
-        :vs="item.verticalScaleValue"
-        :hs="item.horizontalScaleValue"
+        :budget="budget"
+        :outcomeProp="item"
         :index="index"
         :totalOutcomes="outcomes.length"
-        :outcomeFunding="parseFloat(item.outcomeBudget)"
         @compute-budget="computeSpent"
         @computed-outcome="computedOutcome"
       />
@@ -82,6 +79,8 @@ export default {
       if (this.freezeSpending == "frozen") {
         this.adjustBudgets(this.outcomes[retObj.index], (newVal - oldVal) )
       }
+
+      console.dir(this.outcomes)
 
     },
     adjustBudgets(adjustedOutcome, difference) {

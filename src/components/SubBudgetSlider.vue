@@ -14,7 +14,7 @@
       @change="computeSubBudgets(subOutcomeFunding, $event)"
     ></b-form-input>
     <b-input-group-append is-text class="text-monospace">
-      {{ subOutcomeFunding }} million
+      {{ subOutcomeFunding.toFixed(2) }} million
     </b-input-group-append>
   </b-input-group>
 </template>
