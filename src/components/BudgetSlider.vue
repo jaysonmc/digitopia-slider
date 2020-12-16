@@ -31,7 +31,7 @@
           <sub-budget-slider 
             v-for="(item, index) in this.subOutcomes"
             :key="item.key"
-            :outcomeFunding="outcomeFunding"
+            :outcomeFunding="outcomeBudget"
             :subOutcomeFunding="item.subOutcomeFunding"
             :oneOf="subOutcomes.length"
             :title="item.title"
@@ -70,7 +70,7 @@ export default {
   data() {
     return {
       title: this.outcomeProp.title,
-      outcomeBudget: this.outcomeProp.outcomeBudget, //
+      outcomeBudget: this.outcomeProp.outcomeBudget,
       vs: this.outcomeProp.verticalScaleValue,
       hs: this.outcomeProp.horizontalScaleValue,
       showAnalysis: false,
@@ -124,10 +124,6 @@ export default {
 
       this.outcomeBudget = newVal
 
-      console.log("outcomeFunding = " + this.outcomeFunding)
-      console.log(oldVal)
-      console.log(newVal)
-
       var retObj = {
         oldOutcomeFunding: oldVal,
         newOutcomeFunding: newVal,
@@ -180,8 +176,10 @@ export default {
   },
   updated() {      
     this.subOutcomes.map( suboutcome => {
-      if (!suboutcome.subOutcomeFunding)
-        suboutcome.subOutcomeFunding = this.$props.outcomeFunding / this.subOutcomes.length
+      if (!suboutcome.subOutcomeFunding ) {
+        suboutcome.subOutcomeFunding = this.$props.outcomeProp.outcomeBudget / this.subOutcomes.length
+      }
+        
     })
   }
 };
