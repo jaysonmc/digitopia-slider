@@ -28,20 +28,18 @@
           <b-input-group  v-if="showAnalysis" prepend="Rate of change">
             <b-form-input v-model="rateOfChange" readonly></b-form-input>
           </b-input-group>
-          <div v-if='outcomeFunding'> 
-            <sub-budget-slider 
-              v-for="(item, index) in this.subOutcomes"
-              :key="item.key"
-              :outcomeFunding="outcomeFunding"
-              :subOutcomeFunding="item.subOutcomeFunding"
-              :oneOf="subOutcomes.length"
-              :title="item.title"
-              :index="index"
-              @compute-sub-budgets="computeSubBudgets"
-              ref="subslider"
-            >
-            </sub-budget-slider>
-          </div>
+          <sub-budget-slider 
+            v-for="(item, index) in this.subOutcomes"
+            :key="item.key"
+            :outcomeFunding="outcomeFunding"
+            :subOutcomeFunding="item.subOutcomeFunding"
+            :oneOf="subOutcomes.length"
+            :title="item.title"
+            :index="index"
+            @compute-sub-budgets="computeSubBudgets"
+            ref="subslider"
+          >
+          </sub-budget-slider>
         </b-form-group>
       </div>
     </div>
@@ -95,7 +93,7 @@ export default {
   methods: {
     tanh() {
 
-      let x = this.outcomeFunding
+      let x = this.outcomeBudget
       let vs = this.vs
       let hs = this.hs
 
@@ -110,7 +108,7 @@ export default {
     },
     tanhPrime() {
 
-      let x = this.outcomeFunding
+      let x = this.outcomeBudget
       let vs = this.vs
       let hs = this.hs
 
@@ -162,6 +160,7 @@ export default {
   },
   computed: {
     computeOutcome : function()  {
+      console.log("casdfkjhasdjkfhasdkjfh")
         var retObj = {
           computedOutcome: this.tanh(),
           index: this.index
