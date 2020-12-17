@@ -33,6 +33,7 @@
             :key="item.key"
             :outcomeFunding="outcomeBudget"
             :subOutcomeFunding="item.subOutcomeFunding"
+            :parent="item.parent"
             :oneOf="subOutcomes.length"
             :title="item.title"
             :index="index"
@@ -69,6 +70,7 @@ export default {
           title: String,
           key: String,
           subOutcomeFunding: Number | undefined,
+          parent: String,
       }
     }
   },
@@ -80,7 +82,7 @@ export default {
       hs: this.outcomeProp.horizontalScaleValue,
       showAnalysis: false,
       outcome: this.outcomeProp,
-      subOutcomes: this.outcomeProp.subOutcomes
+      subOutcomes: this.outcomeProp.subOutcomes,
     }
   },
   methods: {
@@ -133,23 +135,12 @@ export default {
       const oldVal = retObj.oldOutcomeFunding
 
       const difference = (newVal - oldVal)
-      const budgetDelta = (difference / (this.subOutcomes.length - 1))      
 
       let adjustedOutcome = this.subOutcomes[retObj.index]
-      adjustedOutcome.subOutcomeFunding = newVal
-
-      /*
-      this.subOutcomes.forEach(suboutcome => {
-        if (adjustedOutcome.key != suboutcome.key) {
-          suboutcome.subOutcomeFunding = (suboutcome.subOutcomeFunding - budgetDelta)
-        }
-
-        suboutcome.key = suboutcome.key + adjustedOutcome.key
-      })
-      */
+      //adjustedOutcome.subOutcomeFunding = retObj.newOutcomeFunding
 
       retObj.adjustedSuboutcome = adjustedOutcome
-      retObj.budgetDelta = budgetDelta
+      retObj.difference = difference
 
       this.$emit('adjust-sub-budgets', retObj)
     }

@@ -28,6 +28,7 @@ export default {
     oneOf: Number,
     title : String,
     index: Number,
+    parent: String,
   },
   data() {
     return {
@@ -40,7 +41,8 @@ export default {
       var retObj = {
         oldOutcomeFunding: this.subOutcomeFunding,
         newOutcomeFunding: parseFloat(newVal),
-        index: this.index
+        sourceOutcome: this.parent,
+        index: this.index,
       }
       this.$emit('compute-sub-budgets', retObj)
     },

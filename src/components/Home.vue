@@ -101,28 +101,78 @@ export default {
       })
     },
     adjustSubBudgets(retObj) {
-      this.outcomes.forEach(function (outcome) {
 
-        let matchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
-          return suboutcome.title == retObj.adjustedSuboutcome.title
+      const getRelevantOutcomes = (adjustedSuboutcome) => {
+        return this.outcomes.filter( outcome => {
+          return outcome.subOutcomes.filter( suboutcome => {
+            return suboutcome.title == adjustedSuboutcome.title
+          }).length > 0
         })
+      }
 
-        if (matchingSubOutcomes.length == 0) return
+      const helper_adjustSubOutcomes = (retObj, skipSelf) => {
 
-        let nonMatchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
-          return suboutcome.title != retObj.adjustedSuboutcome.title
+        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach( outcome => {
+
+          if (skipSelf && retObj.sourceOutcome == outcome.title) {
+            return
+          }
+
+          let matchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
+            return suboutcome.title == retObj.adjustedSuboutcome.title
+          })
+
+          let nonMatchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
+            return suboutcome.title != retObj.adjustedSuboutcome.title
+          })
+
+          matchingSubOutcomes.map(suboutcome => {
+            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
+            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+          })
+
+          nonMatchingSubOutcomes.map(suboutcome => {
+
+            const delta = retObj.difference / nonMatchingSubOutcomes.length
+
+            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
+            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+          })
         })
+      }
 
-        matchingSubOutcomes.map(suboutcome => {
-          suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
-          suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
-        })
+      if (getRelevantOutcomes(retObj.adjustedSuboutcome).length > 1) {
+        helper_adjustSubOutcomes(retObj, false)
+      } else {
+        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach( outcome => {
 
-        nonMatchingSubOutcomes.map(suboutcome => {
-          suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - retObj.budgetDelta
-          suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+          let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
+            return suboutcome.title == retObj.adjustedSuboutcome.title
+          })
+
+          directlyAdjustedSubOutcomes.map(suboutcome => {
+            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
+          })
+
+          let impactedSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
+            return suboutcome.title != retObj.adjustedSuboutcome.title
+          })
+
+          impactedSubOutcomes.map(suboutcome => {
+
+            const delta = (retObj.difference / impactedSubOutcomes.length)
+
+            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
+            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+          })
+
+          impactedSubOutcomes.forEach( suboutcome => {
+            retObj.adjustedSuboutcome = suboutcome
+            retObj.difference = ((retObj.difference)/impactedSubOutcomes.length)
+            helper_adjustSubOutcomes(retObj, true)
+          })        
         })
-      })
+      }
     },
   },
   data() {
@@ -140,11 +190,13 @@ export default {
               title: "Suboutcome 1",
               key: "1",
               subOutcomeFunding: undefined,
+              parent: "Reconciliation",
             },
             {
               title: "Suboutcome 2",
               key: "2",
               subOutcomeFunding: undefined,
+              parent: "Reconciliation",
             },
           ]
         },
@@ -160,11 +212,13 @@ export default {
               title: "Suboutcome 3",
               key: "3",
               subOutcomeFunding: undefined,
+              parent: "Diversity and inclusion",
             },
             {
               title: "Suboutcome 4",
               key: "4",
               subOutcomeFunding: undefined,
+              parent: "Diversity and inclusion",
             },
           ]
         },
@@ -180,11 +234,18 @@ export default {
               title: "Suboutcome 4",
               key: "4",
               subOutcomeFunding: undefined,
+              parent: "Climate",
             },
             {
               title: "Suboutcome 5",
               key: "5",
               subOutcomeFunding: undefined,
+            },
+            {
+              title: "Suboutcome 6",
+              key: "6",
+              subOutcomeFunding: undefined,
+              parent: "Climate",
             },
           ]
         },
