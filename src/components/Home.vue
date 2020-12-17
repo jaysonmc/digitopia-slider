@@ -158,19 +158,42 @@ export default {
             return suboutcome.title != retObj.adjustedSuboutcome.title
           })
 
+          let initialRetObjVal = retObj.difference
+
           impactedSubOutcomes.map(suboutcome => {
 
-            const delta = (retObj.difference / impactedSubOutcomes.length)
+            // TO-DO little spagetti here ...
+            let initialSubOutcomeFunding = suboutcome.subOutcomeFunding
+
+            const delta = (initialRetObjVal / impactedSubOutcomes.length)
 
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
             suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+
+            let updatedSubOutcomeFunding = suboutcome.subOutcomeFunding
+
+            let difference = initialSubOutcomeFunding - updatedSubOutcomeFunding
+
+            // adjust the retObj to be the impacted suboutcomes
+            retObj.adjustedSuboutcome = suboutcome
+
+            // multiplying the value out tells the next function the total difference 
+            // it needs to distribute between its respective suboutcomes
+            retObj.difference = difference * impactedSubOutcomes.length
+
+            // pass modified retObj to update the related suboutcomes accordingly
+            helper_adjustSubOutcomes(retObj, true)
+
           })
 
+
+          /*
           impactedSubOutcomes.forEach( suboutcome => {
             retObj.adjustedSuboutcome = suboutcome
             retObj.difference = ((retObj.difference)/impactedSubOutcomes.length)
             helper_adjustSubOutcomes(retObj, true)
           })        
+          */
         })
       }
     },
@@ -198,6 +221,18 @@ export default {
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
             },
+            {
+              title: "Suboutcome 8",
+              key: "8",
+              subOutcomeFunding: undefined,
+              parent: "Reconciliation",
+            },
+            {
+              title: "Suboutcome 9",
+              key: "9",
+              subOutcomeFunding: undefined,
+              parent: "Reconciliation",
+            },
           ]
         },
         {
@@ -217,6 +252,12 @@ export default {
             {
               title: "Suboutcome 4",
               key: "4",
+              subOutcomeFunding: undefined,
+              parent: "Diversity and inclusion",
+            },
+            {
+              title: "Suboutcome 7",
+              key: "7",
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
             },
