@@ -103,26 +103,26 @@ export default {
     adjustSubBudgets(retObj) {
       this.outcomes.forEach(function (outcome) {
 
-        let updateSiblingsFlag = false;
-
-        outcome.subOutcomes.forEach(function (suboutcome) {
-          if (suboutcome.title == retObj.adjustedSuboutcome.title) {
-            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
-            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
-            updateSiblingsFlag = true
-          }
+        let matchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
+          return suboutcome.title == retObj.adjustedSuboutcome.title
         })
-        if (updateSiblingsFlag) {
-          outcome.subOutcomes.forEach(function (suboutcome) { 
-            if (suboutcome.title != retObj.adjustedSuboutcome.title) {
-              suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - retObj.budgetDelta
-              suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
-            }
-          })
-        }
-        updateSiblingsFlag = false
+
+        if (matchingSubOutcomes.length == 0) return
+
+        let nonMatchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
+          return suboutcome.title != retObj.adjustedSuboutcome.title
+        })
+
+        matchingSubOutcomes.map(suboutcome => {
+          suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
+          suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+        })
+
+        nonMatchingSubOutcomes.map(suboutcome => {
+          suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - retObj.budgetDelta
+          suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+        })
       })
-      console.dir(this.outcomes)
     },
   },
   data() {
