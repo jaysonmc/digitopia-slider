@@ -46,6 +46,7 @@
         :totalOutcomes="outcomes.length"
         @compute-budget="computeSpent"
         @computed-outcome="computedOutcome"
+        @adjust-sub-budgets="adjustSubBudgets"
       />
     </div>
   </div>
@@ -74,16 +75,16 @@ export default {
       let newVal = retObj.newOutcomeFunding
       let oldVal = retObj.oldOutcomeFunding
 
-      this.outcomes[retObj.index].outcomeBudget = retObj.newOutcomeFunding
+      let adjustedOutcome = this.outcomes[retObj.index]
+
+      adjustedOutcome.outcomeBudget = retObj.newOutcomeFunding
 
       if (this.freezeSpending == "frozen") {
-        this.adjustBudgets(this.outcomes[retObj.index], (newVal - oldVal) )
+        this.adjustSiblingBudgets(this.outcomes[retObj.index], (newVal - oldVal) )
       }
 
-      console.dir(this.outcomes)
-
     },
-    adjustBudgets(adjustedOutcome, difference) {
+    adjustSiblingBudgets(adjustedOutcome, difference) {
       let diffVal = difference/ (this.outcomes.length-1)
   
       this.outcomes.forEach(outcome => {
@@ -98,7 +99,31 @@ export default {
         if(this.showAnalysis == "analysis") component.setAnalysis(true)
         else component.setAnalysis(false)
       })
-    }
+    },
+    adjustSubBudgets(retObj) {
+      this.outcomes.forEach(function (outcome) {
+
+        let updateSiblingsFlag = false;
+
+        outcome.subOutcomes.forEach(function (suboutcome) {
+          if (suboutcome.title == retObj.adjustedSuboutcome.title) {
+            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
+            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+            updateSiblingsFlag = true
+          }
+        })
+        if (updateSiblingsFlag) {
+          outcome.subOutcomes.forEach(function (suboutcome) { 
+            if (suboutcome.title != retObj.adjustedSuboutcome.title) {
+              suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - retObj.budgetDelta
+              suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
+            }
+          })
+        }
+        updateSiblingsFlag = false
+      })
+      console.dir(this.outcomes)
+    },
   },
   data() {
     return {
@@ -110,6 +135,18 @@ export default {
           horizontalScaleValue: 1,
           outcomeBudget: undefined,
           key: 1,
+          subOutcomes: [
+            {
+              title: "Suboutcome 1",
+              key: "1",
+              subOutcomeFunding: undefined,
+            },
+            {
+              title: "Suboutcome 2",
+              key: "2",
+              subOutcomeFunding: undefined,
+            },
+          ]
         },
         {
           title: "Diversity and inclusion",
@@ -117,7 +154,19 @@ export default {
           verticalScaleValue: 0.1,
           horizontalScaleValue: 1,
           outcomeBudget: undefined,
-          key: 2
+          key: 2,
+          subOutcomes: [
+            {
+              title: "Suboutcome 3",
+              key: "3",
+              subOutcomeFunding: undefined,
+            },
+            {
+              title: "Suboutcome 4",
+              key: "4",
+              subOutcomeFunding: undefined,
+            },
+          ]
         },
         {
           title: "Climate",
@@ -125,7 +174,19 @@ export default {
           verticalScaleValue: 0.01,
           horizontalScaleValue: 1,
           outcomeBudget: undefined,
-          key: 3
+          key: 3,
+          subOutcomes: [
+            {
+              title: "Suboutcome 4",
+              key: "4",
+              subOutcomeFunding: undefined,
+            },
+            {
+              title: "Suboutcome 5",
+              key: "5",
+              subOutcomeFunding: undefined,
+            },
+          ]
         },
       ],
       budget: 100,

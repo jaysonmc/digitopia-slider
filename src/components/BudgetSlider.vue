@@ -65,6 +65,11 @@ export default {
       horizontalScaleValue: Number,
       computedOutcome: null | Number,
       key: Number,
+      subOutcomes: {
+          title: String,
+          key: String,
+          subOutcomeFunding: Number | undefined,
+      }
     }
   },
   data() {
@@ -75,19 +80,7 @@ export default {
       hs: this.outcomeProp.horizontalScaleValue,
       showAnalysis: false,
       outcome: this.outcomeProp,
-      
-      subOutcomes: [
-        {
-          title: "Suboutcome 1",
-          key: "1",
-          subOutcomeFunding: undefined,
-        },
-        {
-          title: "Suboutcome 2",
-          key: "2",
-          subOutcomeFunding: undefined,
-        },
-      ]
+      subOutcomes: this.outcomeProp.subOutcomes
     }
   },
   methods: {
@@ -145,6 +138,7 @@ export default {
       let adjustedOutcome = this.subOutcomes[retObj.index]
       adjustedOutcome.subOutcomeFunding = newVal
 
+      /*
       this.subOutcomes.forEach(suboutcome => {
         if (adjustedOutcome.key != suboutcome.key) {
           suboutcome.subOutcomeFunding = (suboutcome.subOutcomeFunding - budgetDelta)
@@ -152,11 +146,16 @@ export default {
 
         suboutcome.key = suboutcome.key + adjustedOutcome.key
       })
+      */
+
+      retObj.adjustedSuboutcome = adjustedOutcome
+      retObj.budgetDelta = budgetDelta
+
+      this.$emit('adjust-sub-budgets', retObj)
     }
   },
   computed: {
     computeOutcome : function()  {
-      console.log("casdfkjhasdjkfhasdkjfh")
         var retObj = {
           computedOutcome: this.tanh(),
           index: this.index
@@ -178,8 +177,7 @@ export default {
     this.subOutcomes.map( suboutcome => {
       if (!suboutcome.subOutcomeFunding ) {
         suboutcome.subOutcomeFunding = this.$props.outcomeProp.outcomeBudget / this.subOutcomes.length
-      }
-        
+      } 
     })
   }
 };
