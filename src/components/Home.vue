@@ -158,42 +158,18 @@ export default {
             return suboutcome.title != retObj.adjustedSuboutcome.title
           })
 
-          let initialRetObjVal = retObj.difference
-
           impactedSubOutcomes.map(suboutcome => {
 
-            // TO-DO little spagetti here ...
-            let initialSubOutcomeFunding = suboutcome.subOutcomeFunding
-
-            const delta = (initialRetObjVal / impactedSubOutcomes.length)
+            const delta = (retObj.difference / impactedSubOutcomes.length)
 
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
             suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
 
-            let updatedSubOutcomeFunding = suboutcome.subOutcomeFunding
-
-            let difference = initialSubOutcomeFunding - updatedSubOutcomeFunding
-
-            // adjust the retObj to be the impacted suboutcomes
             retObj.adjustedSuboutcome = suboutcome
 
-            // multiplying the value out tells the next function the total difference 
-            // it needs to distribute between its respective suboutcomes
-            retObj.difference = difference * impactedSubOutcomes.length
-
-            // pass modified retObj to update the related suboutcomes accordingly
             helper_adjustSubOutcomes(retObj, true)
 
           })
-
-
-          /*
-          impactedSubOutcomes.forEach( suboutcome => {
-            retObj.adjustedSuboutcome = suboutcome
-            retObj.difference = ((retObj.difference)/impactedSubOutcomes.length)
-            helper_adjustSubOutcomes(retObj, true)
-          })        
-          */
         })
       }
     },
@@ -281,6 +257,7 @@ export default {
               title: "Suboutcome 5",
               key: "5",
               subOutcomeFunding: undefined,
+              parent: "Climate",
             },
             {
               title: "Suboutcome 6",

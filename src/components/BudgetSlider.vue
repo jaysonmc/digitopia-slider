@@ -134,13 +134,8 @@ export default {
       const newVal = retObj.newOutcomeFunding
       const oldVal = retObj.oldOutcomeFunding
 
-      const difference = (newVal - oldVal)
-
-      let adjustedOutcome = this.subOutcomes[retObj.index]
-      //adjustedOutcome.subOutcomeFunding = retObj.newOutcomeFunding
-
-      retObj.adjustedSuboutcome = adjustedOutcome
-      retObj.difference = difference
+      retObj.adjustedSuboutcome = this.subOutcomes[retObj.index]
+      retObj.difference = (newVal - oldVal)
 
       this.$emit('adjust-sub-budgets', retObj)
     }

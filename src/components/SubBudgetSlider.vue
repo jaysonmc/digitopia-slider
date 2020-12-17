@@ -30,11 +30,6 @@ export default {
     index: Number,
     parent: String,
   },
-  data() {
-    return {
-      filler: false
-    }
-  },
   methods: {
     computeSubBudgets: function(oldVal, newVal) {
 
