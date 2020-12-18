@@ -127,13 +127,15 @@ export default {
           })
 
           matchingSubOutcomes.map(suboutcome => {
+
             suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
             suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
           })
 
           nonMatchingSubOutcomes.map(suboutcome => {
 
-            const delta = retObj.difference / nonMatchingSubOutcomes.length
+            let difference = retObj.newOutcomeFunding - retObj.oldOutcomeFunding
+            const delta = difference / nonMatchingSubOutcomes.length
 
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
             suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
@@ -160,13 +162,16 @@ export default {
 
           impactedSubOutcomes.map(suboutcome => {
 
+            retObj.oldOutcomeFunding = suboutcome.subOutcomeFunding
+
             const delta = (retObj.difference / impactedSubOutcomes.length)
 
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
             suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
 
             retObj.adjustedSuboutcome = suboutcome
-
+            retObj.newOutcomeFunding = suboutcome.subOutcomeFunding
+          
             helper_adjustSubOutcomes(retObj, true)
 
           })
