@@ -110,7 +110,18 @@ export default {
         })
       }
 
-      const helper_adjustSubOutcomes = (retObj, skipSelf) => {
+      const updateAdjustedSliders = (outcome, retObj) => {
+        let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
+            return suboutcome.title == retObj.adjustedSuboutcome.title
+          })
+
+          directlyAdjustedSubOutcomes.map(suboutcome => {
+            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
+          })
+      }
+
+      // This function will update a suboutcome, 
+      const adjustSubOutcomesAndSiblings = (retObj, skipSelf) => {
 
         getRelevantOutcomes(retObj.adjustedSuboutcome).forEach( outcome => {
 
@@ -118,18 +129,10 @@ export default {
             return
           }
 
-          let matchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
-            return suboutcome.title == retObj.adjustedSuboutcome.title
-          })
+          updateAdjustedSliders(outcome, retObj)
 
           let nonMatchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
             return suboutcome.title != retObj.adjustedSuboutcome.title
-          })
-
-          matchingSubOutcomes.map(suboutcome => {
-
-            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
-            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
           })
 
           nonMatchingSubOutcomes.map(suboutcome => {
@@ -138,23 +141,16 @@ export default {
             const delta = difference / nonMatchingSubOutcomes.length
 
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
-            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
           })
         })
       }
 
       if (getRelevantOutcomes(retObj.adjustedSuboutcome).length > 1) {
-        helper_adjustSubOutcomes(retObj, false)
+        adjustSubOutcomesAndSiblings(retObj, false)
       } else {
         getRelevantOutcomes(retObj.adjustedSuboutcome).forEach( outcome => {
 
-          let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
-            return suboutcome.title == retObj.adjustedSuboutcome.title
-          })
-
-          directlyAdjustedSubOutcomes.map(suboutcome => {
-            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
-          })
+          updateAdjustedSliders(outcome, retObj)
 
           let impactedSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
             return suboutcome.title != retObj.adjustedSuboutcome.title
@@ -162,19 +158,21 @@ export default {
 
           impactedSubOutcomes.map(suboutcome => {
 
-            retObj.oldOutcomeFunding = suboutcome.subOutcomeFunding
-
             const delta = (retObj.difference / impactedSubOutcomes.length)
 
+            // update the outcome being currently iterated over
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
-            suboutcome.key = suboutcome.key.toString() + retObj.adjustedSuboutcome.key.toString()
 
+            // modify the retObj to represent the suboutcome that was just updated
             retObj.adjustedSuboutcome = suboutcome
             retObj.newOutcomeFunding = suboutcome.subOutcomeFunding
-          
-            helper_adjustSubOutcomes(retObj, true)
+            retObj.oldOutcomeFunding = (retObj.newOutcomeFunding + delta)
+
+            // pass the updated retObj to the function to update a given suboutcome
+            adjustSubOutcomesAndSiblings(retObj, true)
 
           })
+
         })
       }
     },
