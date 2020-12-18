@@ -31,11 +31,9 @@
           <sub-budget-slider 
             v-for="(item, index) in this.subOutcomes"
             :key="item.key"
+            :suboutcomeProp="item"
             :outcomeFunding="outcomeBudget"
-            :subOutcomeFunding="item.subOutcomeFunding"
-            :parent="item.parent"
             :oneOf="subOutcomes.length"
-            :title="item.title"
             :index="index"
             @compute-sub-budgets="computeSubBudgets"
             ref="subslider"
@@ -67,10 +65,11 @@ export default {
       computedOutcome: null | Number,
       key: Number,
       subOutcomes: {
-          title: String,
-          key: String,
-          subOutcomeFunding: Number | undefined,
-          parent: String,
+        title: String,
+        key: String,
+        subOutcomeFunding: Number | undefined,
+        parent: String,
+        depts: Array
       }
     }
   },
@@ -83,6 +82,7 @@ export default {
       showAnalysis: false,
       outcome: this.outcomeProp,
       subOutcomes: this.outcomeProp.subOutcomes,
+      depts: this.outcomeProp.subOutcomes.depts
     }
   },
   methods: {
