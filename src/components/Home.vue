@@ -63,7 +63,7 @@ export default {
   methods: {
     init() {
       this.outcomes = this.outcomes.map((item) => {
-        item.outcomeBudget = (this.budget / this.outcomes.length)
+        item.outcomeBudget = this.budget / this.outcomes.length;
         return item;
       });
     },
@@ -71,109 +71,106 @@ export default {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
     computeSpent(retObj) {
+      let newVal = retObj.newOutcomeFunding;
+      let oldVal = retObj.oldOutcomeFunding;
 
-      let newVal = retObj.newOutcomeFunding
-      let oldVal = retObj.oldOutcomeFunding
+      let adjustedOutcome = this.outcomes[retObj.index];
 
-      let adjustedOutcome = this.outcomes[retObj.index]
-
-      adjustedOutcome.outcomeBudget = retObj.newOutcomeFunding
+      adjustedOutcome.outcomeBudget = retObj.newOutcomeFunding;
 
       if (this.freezeSpending == "frozen") {
-        this.adjustSiblingBudgets(this.outcomes[retObj.index], (newVal - oldVal) )
+        this.adjustSiblingBudgets(this.outcomes[retObj.index], newVal - oldVal);
       }
-
     },
     adjustSiblingBudgets(adjustedOutcome, difference) {
-      let diffVal = difference/ (this.outcomes.length-1)
-  
-      this.outcomes.forEach(outcome => {
+      let diffVal = difference / (this.outcomes.length - 1);
+
+      this.outcomes.forEach((outcome) => {
         if (outcome.title != adjustedOutcome.title) {
-          outcome.outcomeBudget = (outcome.outcomeBudget - diffVal)
-          outcome.key = parseInt(adjustedOutcome.key) + outcome.key
-        } 
-      })
+          outcome.outcomeBudget = outcome.outcomeBudget - diffVal;
+          outcome.key = parseInt(adjustedOutcome.key) + outcome.key;
+        }
+      });
     },
     setAnalysis() {
-      this.$refs.slider.forEach(component => {
-        if(this.showAnalysis == "analysis") component.setAnalysis(true)
-        else component.setAnalysis(false)
-      })
+      this.$refs.slider.forEach((component) => {
+        if (this.showAnalysis == "analysis") component.setAnalysis(true);
+        else component.setAnalysis(false);
+      });
     },
     adjustSubBudgets(retObj) {
-
       const getRelevantOutcomes = (adjustedSuboutcome) => {
-        return this.outcomes.filter( outcome => {
-          return outcome.subOutcomes.filter( suboutcome => {
-            return suboutcome.title == adjustedSuboutcome.title
-          }).length > 0
-        })
-      }
+        return this.outcomes.filter((outcome) => {
+          return (
+            outcome.subOutcomes.filter((suboutcome) => {
+              return suboutcome.title == adjustedSuboutcome.title;
+            }).length > 0
+          );
+        });
+      };
 
       const updateAdjustedSliders = (outcome, retObj) => {
-        let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
-            return suboutcome.title == retObj.adjustedSuboutcome.title
-          })
+        let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter(
+          (suboutcome) => {
+            return suboutcome.title == retObj.adjustedSuboutcome.title;
+          }
+        );
 
-          directlyAdjustedSubOutcomes.map(suboutcome => {
-            suboutcome.subOutcomeFunding = retObj.newOutcomeFunding
-          })
-      }
+        directlyAdjustedSubOutcomes.map((suboutcome) => {
+          suboutcome.subOutcomeFunding = retObj.newOutcomeFunding;
+        });
+      };
 
-      // This function will update a suboutcome, 
+      // This function will update a suboutcome,
       const adjustSubOutcomesAndSiblings = (retObj, skipSelf) => {
-
-        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach( outcome => {
-
+        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
           if (skipSelf && retObj.sourceOutcome == outcome.title) {
-            return
+            return;
           }
 
-          updateAdjustedSliders(outcome, retObj)
+          updateAdjustedSliders(outcome, retObj);
 
-          let nonMatchingSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
-            return suboutcome.title != retObj.adjustedSuboutcome.title
-          })
+          let nonMatchingSubOutcomes = outcome.subOutcomes.filter(
+            (suboutcome) => {
+              return suboutcome.title != retObj.adjustedSuboutcome.title;
+            }
+          );
 
-          nonMatchingSubOutcomes.map(suboutcome => {
+          nonMatchingSubOutcomes.map((suboutcome) => {
+            let difference =
+              retObj.newOutcomeFunding - retObj.oldOutcomeFunding;
+            const delta = difference / nonMatchingSubOutcomes.length;
 
-            let difference = retObj.newOutcomeFunding - retObj.oldOutcomeFunding
-            const delta = difference / nonMatchingSubOutcomes.length
-
-            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
-          })
-        })
-      }
+            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
+          });
+        });
+      };
 
       if (getRelevantOutcomes(retObj.adjustedSuboutcome).length > 1) {
-        adjustSubOutcomesAndSiblings(retObj, false)
+        adjustSubOutcomesAndSiblings(retObj, false);
       } else {
-        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach( outcome => {
+        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
+          updateAdjustedSliders(outcome, retObj);
 
-          updateAdjustedSliders(outcome, retObj)
+          let impactedSubOutcomes = outcome.subOutcomes.filter((suboutcome) => {
+            return suboutcome.title != retObj.adjustedSuboutcome.title;
+          });
 
-          let impactedSubOutcomes = outcome.subOutcomes.filter( suboutcome => {
-            return suboutcome.title != retObj.adjustedSuboutcome.title
-          })
-
-          impactedSubOutcomes.map(suboutcome => {
-
-            const delta = (retObj.difference / impactedSubOutcomes.length)
+          impactedSubOutcomes.map((suboutcome) => {
+            const delta = retObj.difference / impactedSubOutcomes.length;
 
             // update the outcome being currently iterated over
-            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta
+            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
 
             // modify the retObj to represent the suboutcome that was just updated
-            retObj.adjustedSuboutcome = suboutcome
-            retObj.newOutcomeFunding = suboutcome.subOutcomeFunding
-            retObj.oldOutcomeFunding = (retObj.newOutcomeFunding + delta)
+            retObj.adjustedSuboutcome = suboutcome;
+            retObj.newOutcomeFunding = suboutcome.subOutcomeFunding;
+            retObj.oldOutcomeFunding = retObj.newOutcomeFunding + delta;
 
             // pass the updated retObj to the function to update a given suboutcome
-            adjustSubOutcomesAndSiblings(retObj, true)
-
-          })
-
-        })
+            adjustSubOutcomesAndSiblings(retObj, true);
+          });
+        });
       }
     },
   },
@@ -212,7 +209,7 @@ export default {
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
             },
-          ]
+          ],
         },
         {
           title: "Diversity and inclusion",
@@ -240,7 +237,7 @@ export default {
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
             },
-          ]
+          ],
         },
         {
           title: "Climate",
@@ -268,7 +265,7 @@ export default {
               subOutcomeFunding: undefined,
               parent: "Climate",
             },
-          ]
+          ],
         },
       ],
       budget: 100,
