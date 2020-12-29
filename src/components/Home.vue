@@ -99,6 +99,7 @@ export default {
       });
     },
     adjustSubBudgets(retObj) {
+
       const getRelevantOutcomes = (adjustedSuboutcome) => {
         return this.outcomes.filter((outcome) => {
           return (
@@ -118,6 +119,7 @@ export default {
 
         directlyAdjustedSubOutcomes.map((suboutcome) => {
           suboutcome.subOutcomeFunding = retObj.newOutcomeFunding;
+          suboutcome.key += 1
         });
       };
 
@@ -142,6 +144,7 @@ export default {
             const delta = difference / nonMatchingSubOutcomes.length;
 
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
+            suboutcome.key += 1
           });
         });
       };
@@ -161,6 +164,7 @@ export default {
 
             // update the outcome being currently iterated over
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
+            suboutcome.key += 1
 
             // modify the retObj to represent the suboutcome that was just updated
             retObj.adjustedSuboutcome = suboutcome;

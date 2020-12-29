@@ -131,12 +131,7 @@ export default {
       this.showAnalysis = bool
     },
     computeSubBudgets(retObj) {
-      const newVal = retObj.newOutcomeFunding
-      const oldVal = retObj.oldOutcomeFunding
-
       retObj.adjustedSuboutcome = this.subOutcomes[retObj.index]
-      retObj.difference = (newVal - oldVal)
-
       this.$emit('adjust-sub-budgets', retObj)
     }
   },
@@ -161,8 +156,10 @@ export default {
   },
   updated() {      
     this.subOutcomes.map( suboutcome => {
-      if (!suboutcome.subOutcomeFunding ) {
-        suboutcome.subOutcomeFunding = this.$props.outcomeProp.outcomeBudget / this.subOutcomes.length
+
+      if (!suboutcome.subOutcomeFunding) {
+        suboutcome.subOutcomeFunding = parseFloat(this.$props.outcomeProp.outcomeBudget / this.subOutcomes.length)
+        suboutcome.key += 1
       } 
     })
   }

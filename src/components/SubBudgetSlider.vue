@@ -1,20 +1,20 @@
 <template>
  <b-input-group id="sub-slider-input-group">
     <b-input-group-prepend is-text class="text-monospace">
-      {{ this.title }} funding
+      {{ title }} funding
     </b-input-group-prepend>
     <b-form-input
       id="bg-opacity"
-      :value="parseInt(this.subOutcomeFunding).toFixed(2)"
+      :value="parseInt(subOutcomeFunding).toFixed(2)"
       type="range"
       number
       min="0"
       :max="outcomeFunding"
       step="0.01"
-      @change="computeSubBudgets(this.subOutcomeFunding, $event)"
+      @change="computeSubBudgets(subOutcomeFunding, $event)"
     ></b-form-input>
     <b-input-group-append is-text class="text-monospace">
-      {{ this.subOutcomeFunding.toFixed(2) }} million
+      {{ subOutcomeFunding.toFixed(2) }} million
     </b-input-group-append>
   </b-input-group>
 </template>
@@ -44,13 +44,16 @@ export default {
   },
   methods: {
     computeSubBudgets: function(oldVal, newVal) {
+      newVal = parseFloat(newVal)
 
       var retObj = {
-        oldOutcomeFunding: this.subOutcomeFunding,
-        newOutcomeFunding: parseFloat(newVal),
+        oldOutcomeFunding: oldVal,
+        newOutcomeFunding: newVal,
         sourceOutcome: this.parent,
         index: this.index,
+        difference: newVal - oldVal
       }
+
       this.$emit('compute-sub-budgets', retObj)
     },
   },
