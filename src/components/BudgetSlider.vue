@@ -117,7 +117,14 @@ export default {
     },
     computeBudget: function(oldVal, newVal) {
 
-      this.outcomeBudget = newVal
+      this.outcomeBudget = parseFloat(newVal)
+      const difference = newVal - oldVal;
+      const delta = difference / this.subOutcomes.length
+
+      this.subOutcomes.map( suboutcome => {
+        suboutcome.subOutcomeFunding += delta
+        suboutcome.key += suboutcome.key
+      })
 
       var retObj = {
         oldOutcomeFunding: oldVal,

@@ -44,7 +44,7 @@
         :outcomeProp="item"
         :index="index"
         :totalOutcomes="outcomes.length"
-        @compute-budget="computeSpent"
+        @compute-budget="computeBudget"
         @computed-outcome="computedOutcome"
         @adjust-sub-budgets="adjustSubBudgets"
       />
@@ -70,7 +70,7 @@ export default {
     computedOutcome(retObj) {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
-    computeSpent(retObj) {
+    computeBudget(retObj) {
       let newVal = retObj.newOutcomeFunding;
       let oldVal = retObj.oldOutcomeFunding;
 
@@ -83,12 +83,16 @@ export default {
       }
     },
     adjustSiblingBudgets(adjustedOutcome, difference) {
-      let diffVal = difference / (this.outcomes.length - 1);
+      const diffVal = difference / (this.outcomes.length - 1);
 
       this.outcomes.forEach((outcome) => {
         if (outcome.title != adjustedOutcome.title) {
-          outcome.outcomeBudget = outcome.outcomeBudget - diffVal;
-          outcome.key = parseInt(adjustedOutcome.key) + outcome.key;
+          outcome.outcomeBudget = outcome.outcomeBudget - diffVal
+          outcome.subOutcomes.map( suboutcome => {
+            const subDiffVal = diffVal / outcome.subOutcomes.length
+            suboutcome.subOutcomeFunding -= subDiffVal
+          })
+          outcome.key = outcome.key + adjustedOutcome.key + "";
         }
       });
     },
@@ -119,7 +123,7 @@ export default {
 
         directlyAdjustedSubOutcomes.map((suboutcome) => {
           suboutcome.subOutcomeFunding = retObj.newOutcomeFunding;
-          suboutcome.key += 1
+          suboutcome.key =suboutcome.key + outcome.key + ""
         });
       };
 
@@ -144,7 +148,7 @@ export default {
             const delta = difference / nonMatchingSubOutcomes.length;
 
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
-            suboutcome.key += 1
+            suboutcome.key =  suboutcome.key + outcome.key + ""
           });
         });
       };
@@ -164,7 +168,7 @@ export default {
 
             // update the outcome being currently iterated over
             suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
-            suboutcome.key += 1
+            suboutcome.key = suboutcome.key + retObj.adjustedSuboutcome.key + ""
 
             // modify the retObj to represent the suboutcome that was just updated
             retObj.adjustedSuboutcome = suboutcome;
