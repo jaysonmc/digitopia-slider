@@ -5,7 +5,7 @@
     </b-input-group-prepend>
     <b-form-input
       id="bg-opacity"
-      :value="parseInt(subOutcomeFunding).toFixed(2)"
+      :value="computeSubOutcomeFunding"
       type="range"
       number
       min="0"
@@ -14,7 +14,7 @@
       @change="computeSubBudgets(subOutcomeFunding, $event)"
     ></b-form-input>
     <b-input-group-append is-text class="text-monospace">
-      {{ subOutcomeFunding.toFixed(2) }} million
+      {{ computeSubOutcomeFunding }} million
     </b-input-group-append>
   </b-input-group>
 </template>
@@ -41,6 +41,14 @@ export default {
       depts: this.suboutcomeProp.depts,
       subOutcomeFunding: this.suboutcomeProp.subOutcomeFunding
     }
+  },
+  computed: {
+    computeSubOutcomeFunding : function()  {
+        if (this.subOutcomeFunding) {
+          return parseFloat(this.subOutcomeFunding).toFixed(2)
+        }
+        return 0
+    },
   },
   methods: {
     computeSubBudgets: function(oldVal, newVal) {
