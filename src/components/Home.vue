@@ -79,22 +79,44 @@ export default {
       adjustedOutcome.outcomeBudget = retObj.newOutcomeFunding;
 
       if (this.freezeSpending == "frozen") {
-        this.adjustSiblingBudgets(this.outcomes[retObj.index], newVal - oldVal);
+        this.adjustSiblingBudgets(retObj, newVal - oldVal);
       }
     },
-    adjustSiblingBudgets(adjustedOutcome, difference) {
+    adjustSiblingBudgets(retObj, difference) {
       const diffVal = difference / (this.outcomes.length - 1);
+      const adjustedOutcome = this.outcomes[retObj.index]
+
+      let impactedSubOutcomes_retObjArray = []
 
       this.outcomes.forEach((outcome) => {
         if (outcome.title != adjustedOutcome.title) {
           outcome.outcomeBudget = outcome.outcomeBudget - diffVal
           outcome.subOutcomes.map( suboutcome => {
             const subDiffVal = diffVal / outcome.subOutcomes.length
+
+            if (this.getRelevantOutcomes(suboutcome).length > 1 && (outcome.title != suboutcome.parent)) {
+              impactedSubOutcomes_retObjArray.push({
+                oldOutcomeFunding: suboutcome.subOutcomeFunding,
+                newOutcomeFunding: suboutcome.subOutcomeFunding + subDiffVal,
+                sourceOutcome: outcome.title,
+                index: suboutcome.index,
+                difference: subDiffVal,
+                adjustedSuboutcome: suboutcome
+              })
+            } 
+            
             suboutcome.subOutcomeFunding -= subDiffVal
+            outcome.key = outcome.key + adjustedOutcome.key + "";
+
           })
-          outcome.key = outcome.key + adjustedOutcome.key + "";
+          
         }
       });
+
+      impactedSubOutcomes_retObjArray.forEach(retObj => {
+        this.adjustSubBudgets(retObj)
+      })
+
     },
     setAnalysis() {
       this.$refs.slider.forEach((component) => {
@@ -102,18 +124,16 @@ export default {
         else component.setAnalysis(false);
       });
     },
+    getRelevantOutcomes(adjustedSuboutcome) {
+      return this.outcomes.filter((outcome) => {
+        return (
+          outcome.subOutcomes.filter((suboutcome) => {
+            return suboutcome.title == adjustedSuboutcome.title;
+          }).length > 0
+        );
+      });
+    },
     adjustSubBudgets(retObj) {
-
-      const getRelevantOutcomes = (adjustedSuboutcome) => {
-        return this.outcomes.filter((outcome) => {
-          return (
-            outcome.subOutcomes.filter((suboutcome) => {
-              return suboutcome.title == adjustedSuboutcome.title;
-            }).length > 0
-          );
-        });
-      };
-
       const updateAdjustedSliders = (outcome, retObj) => {
         let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter(
           (suboutcome) => {
@@ -129,7 +149,7 @@ export default {
 
       // This function will update a suboutcome,
       const adjustSubOutcomesAndSiblings = (retObj, skipSelf) => {
-        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
+        this.getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
           if (skipSelf && retObj.sourceOutcome == outcome.title) {
             return;
           }
@@ -153,10 +173,10 @@ export default {
         });
       };
 
-      if (getRelevantOutcomes(retObj.adjustedSuboutcome).length > 1) {
+      if (this.getRelevantOutcomes(retObj.adjustedSuboutcome).length > 1) {
         adjustSubOutcomesAndSiblings(retObj, false);
       } else {
-        getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
+        this.getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
           updateAdjustedSliders(outcome, retObj);
 
           let impactedSubOutcomes = outcome.subOutcomes.filter((suboutcome) => {

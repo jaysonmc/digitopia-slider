@@ -123,7 +123,7 @@ export default {
 
       this.subOutcomes.map( suboutcome => {
         suboutcome.subOutcomeFunding += delta
-        suboutcome.key += suboutcome.key
+        suboutcome.key += suboutcome.key + ""
       })
 
       var retObj = {
