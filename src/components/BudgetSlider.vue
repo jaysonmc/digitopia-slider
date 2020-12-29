@@ -10,7 +10,7 @@
             </b-input-group-prepend>
             <b-form-input
               id="bg-opacity"
-              :value="parseInt(outcomeBudget).toFixed(2)"
+              :value="computedOutcomeBudget"
               type="range"
               number
               min="0"
@@ -19,7 +19,7 @@
               @change="computeBudget(outcomeBudget, $event)"
             ></b-form-input>
             <b-input-group-append is-text class="text-monospace">
-              {{ parseFloat(outcomeBudget).toFixed(2) }} million
+              {{ computedOutcomeBudget }} million
             </b-input-group-append>
           </b-input-group>
           <b-input-group v-if="showAnalysis" prepend="Improved by" append="%">
@@ -147,6 +147,9 @@ export default {
     },
     rateOfChange: function() {
       return this.tanhPrime()
+    },
+    computedOutcomeBudget: function() {
+      return parseFloat(this.outcomeBudget).toFixed(2)
     }
   },
   mounted() {
