@@ -34,6 +34,10 @@ var rootNode : Node = {
 
 export const init = (outcomes : Outcome[]) => {
   
+  const duplicate = (nodeArg : Node, nodeArr : Node[]) => {
+    return (nodeArr.filter( node => JSON.stringify(node.value) == JSON.stringify(nodeArg.value)).length >= 1)
+  }
+
   // build the tree
   outcomes.forEach( outcome => {
     addOutcome(outcome)
@@ -44,14 +48,14 @@ export const init = (outcomes : Outcome[]) => {
 
   // find duplcate suboutcomes
   let duplicateSuboutcomeNodes : Node[] = []
+
   outcomes.forEach( outcome => {
-    addOutcome(outcome)
     outcome.subOutcomes.forEach( suboutcome => {
       let foundSuboutcomeNodes : Node[] = getNodes(suboutcome)
-
       if (foundSuboutcomeNodes.length > 1) {
         foundSuboutcomeNodes.forEach(suboutcomeNode => {
-          duplicateSuboutcomeNodes.push(suboutcomeNode)
+          if (!duplicate(suboutcomeNode, duplicateSuboutcomeNodes))
+            duplicateSuboutcomeNodes.push(suboutcomeNode)
         })
       }
     })
@@ -61,10 +65,13 @@ export const init = (outcomes : Outcome[]) => {
   duplicateSuboutcomeNodes.forEach( duplicateSubOutcome => {
 
     let otherDuplicates = duplicateSuboutcomeNodes.filter( duplicate => duplicate.parent != duplicateSubOutcome.parent)
+
     otherDuplicates.forEach( duplicate => {
-      let siblings = getSiblings(duplicate)
+      let siblings : Node[] = getSiblings(duplicate)
+
       siblings.forEach( sibling => {
-        duplicateSubOutcome.children.push(sibling)
+        console.log("Pushing " + sibling.value.title + " to " + duplicate.value.title)
+        duplicate.children.push(sibling)
       })
     })
   })
@@ -120,7 +127,7 @@ const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
 
   const helperGetNode = (node : Node) => {
 
-    if (node.value == input) {
+    if (node.value && node.value.title == input.title) {
       matchingNodes.push(node)
     }
 
@@ -146,6 +153,7 @@ const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
 }
 
 // return the sibling nodes to a given node
+// TO-DO Not properly returning siblings atm
 const getSiblings = (node : Node) : Node[] => {
 
   let siblingNodes : Node[] = [];
@@ -177,7 +185,4 @@ const printTree = () => {
       }) 
     })      
   })
-
-  console.dir(rootNode)
-
 }
