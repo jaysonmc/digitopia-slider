@@ -54,6 +54,7 @@
 
 <script>
 import BudgetSlider from "./BudgetSlider.vue";
+import * as outcomeTree from '../assets/lib/outcometree.ts'
 
 export default {
   name: "HelloWorld",
@@ -66,6 +67,9 @@ export default {
         item.outcomeBudget = this.budget / this.outcomes.length;
         return item;
       });
+
+      outcomeTree.init()
+
     },
     computedOutcome(retObj) {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
@@ -107,9 +111,7 @@ export default {
             
             suboutcome.subOutcomeFunding -= subDiffVal
             outcome.key = outcome.key + adjustedOutcome.key + "";
-
           })
-          
         }
       });
 
