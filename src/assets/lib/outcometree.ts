@@ -1,9 +1,3 @@
-interface Node {
-  children: Node[]
-  value: Outcome | Suboutcome | undefined
-  parent: Node
-}
-
 export interface Outcome {
   title: string,
   computedOutcome: number,
@@ -26,9 +20,15 @@ export interface Department {
   name: string
 }
 
-let rootNode : {
+interface Node {
   children: Node[],
-  value: undefined,
+  value: Outcome | Suboutcome | null,
+  parent: Node | null
+}
+
+var rootNode : Node = {
+  children: [],
+  value: null,
   parent: null
 }
 
@@ -69,6 +69,8 @@ export const init = (outcomes : Outcome[]) => {
     })
   })
 
+  printTree()
+
 }
 
 const addOutcome = (outcome : Outcome) => {
@@ -93,7 +95,7 @@ const addSuboutcome = (suboutcome : Suboutcome, parent : Outcome) => {
     return
   }
 
-  if (parentNodes.length == 1) {
+  if (parentNodes.length == 0) {
     console.error("addSuboutcome: Parent node not found")
     return
   }
@@ -103,7 +105,7 @@ const addSuboutcome = (suboutcome : Suboutcome, parent : Outcome) => {
   let newSuboutcomeNode : Node = {
     children: [],
     value: suboutcome,
-    parent: parentNode[0]
+    parent: parentNode
   }
 
   parentNode.children.push(newSuboutcomeNode)
@@ -111,12 +113,12 @@ const addSuboutcome = (suboutcome : Suboutcome, parent : Outcome) => {
 }
 
 // return array of nodes that contains the matching outcome or suboutcome
-const getNodes = (input : Suboutcome | Outcome) : Node[] => {
+const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
 
   let stack : Node[] = []
   let matchingNodes : Node[] = []
 
-  const helperGetNode = (node : Node) : Node => {
+  const helperGetNode = (node : Node) => {
 
     if (node.value == input) {
       matchingNodes.push(node)
@@ -130,8 +132,14 @@ const getNodes = (input : Suboutcome | Outcome) : Node[] => {
       stack.push(node)
     })
     
-    helperGetNode(stack.shift())
+    let nextNode = stack.shift()
+
+    if (!nextNode) return
+
+    helperGetNode(nextNode)
   }
+
+  helperGetNode(rootNode)
 
   return matchingNodes
   
@@ -142,12 +150,12 @@ const getSiblings = (node : Node) : Node[] => {
 
   let siblingNodes : Node[] = [];
 
-  let matchingNodes = getNodes(node.value)
+  let matchingNodes : Node[] = getNodes(node.value)
 
   matchingNodes.forEach( node => {
     let parentNode = node.parent
 
-    parentNode.children.forEach( node => {
+    parentNode?.children.forEach( node => {
       if (node != node) {
         siblingNodes.push(node)
       }
@@ -155,4 +163,33 @@ const getSiblings = (node : Node) : Node[] => {
   })  
 
   return siblingNodes
+}
+
+const printTree = () => {
+
+  let stack : Node[] = []
+  const printTree = (node : Node | undefined) => {
+
+    if (node == undefined) {
+      return
+    }
+
+    node.children.forEach( node => {
+      stack.push(node)
+      if (node?.value?.title) {
+        console.log("node: " + node?.value?.title)
+        node.children.forEach( node => {
+        console.log("        " + node?.value?.title)
+        })
+      }       
+      else {
+        console.log("Root")
+      }
+    })
+    
+    printTree(stack.shift())
+  }
+
+  printTree(rootNode)
+
 }

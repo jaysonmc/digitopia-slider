@@ -68,7 +68,7 @@ export default {
         return item;
       });
 
-      outcomeTree.init()
+      outcomeTree.init(this.outcomes)
 
     },
     computedOutcome(retObj) {
