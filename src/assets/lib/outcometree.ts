@@ -166,30 +166,18 @@ const getSiblings = (node : Node) : Node[] => {
 }
 
 const printTree = () => {
-
-  let stack : Node[] = []
-  const printTree = (node : Node | undefined) => {
-
-    if (node == undefined) {
-      return
-    }
+  rootNode.children.forEach( node => {
+    console.log("node: " + node?.value?.title)
 
     node.children.forEach( node => {
-      stack.push(node)
-      if (node?.value?.title) {
-        console.log("node: " + node?.value?.title)
-        node.children.forEach( node => {
-        console.log("        " + node?.value?.title)
-        })
-      }       
-      else {
-        console.log("Root")
-      }
-    })
-    
-    printTree(stack.shift())
-  }
+      console.log("        " + node?.value?.title)
 
-  printTree(rootNode)
+      node.children.forEach( impactedSuboutcome => {
+        console.log("                " + impactedSuboutcome?.value?.title)
+      }) 
+    })      
+  })
+
+  console.dir(rootNode)
 
 }
