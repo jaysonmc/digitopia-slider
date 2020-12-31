@@ -116,18 +116,7 @@ export default {
       return hs * (quotientRuleNumerator / quotientRuleDenominator)
     },
     computeBudget: function(oldVal, newVal) {
-
-      this.outcomeBudget = parseFloat(newVal)
-      const difference = newVal - oldVal;
-      const delta = difference / this.subOutcomes.length
-
-      this.subOutcomes.map( suboutcome => {
-        suboutcome.subOutcomeFunding += delta
-        suboutcome.key += suboutcome.key + ""
-      })
-
       var retObj = {
-        oldOutcomeFunding: oldVal,
         newOutcomeFunding: newVal,
         index: this.index
       }

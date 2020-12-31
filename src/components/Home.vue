@@ -75,6 +75,10 @@ export default {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
     computeBudget(retObj) {
+
+      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], retObj.newOutcomeFunding)
+
+      /*
       let newVal = retObj.newOutcomeFunding;
       let oldVal = retObj.oldOutcomeFunding;
 
@@ -85,6 +89,7 @@ export default {
       if (this.freezeSpending == "frozen") {
         this.adjustSiblingBudgets(retObj, newVal - oldVal);
       }
+      */
     },
     adjustSiblingBudgets(retObj, difference) {
       const diffVal = difference / (this.outcomes.length - 1);

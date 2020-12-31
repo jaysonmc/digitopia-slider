@@ -26,7 +26,21 @@ interface Node {
   parent: Node | null
 }
 
-var rootNode : Node = {
+interface OutcomeNode extends Node {
+  value: Outcome
+}
+
+interface SuboutcomeNode extends Node {
+  value: Suboutcome
+}
+
+interface RootNode extends Node {
+  children: OutcomeNode[]
+  value: null,
+  parent: null
+}
+
+var rootNode : RootNode = {
   children: [],
   value: null,
   parent: null
@@ -65,7 +79,6 @@ export const init = (outcomes : Outcome[]) => {
   duplicateSuboutcomeNodes.forEach( duplicateSubOutcomeNode => {
 
     let implactedSuboutcome = duplicateSuboutcomeNodes.filter( duplicate => duplicate.parent != duplicateSubOutcomeNode.parent)
-    console.dir(implactedSuboutcome)
 
     implactedSuboutcome.forEach( duplicate => { 
       let siblings = duplicate.parent?.children.filter( node => node != duplicate)
@@ -75,13 +88,13 @@ export const init = (outcomes : Outcome[]) => {
     })
   })
 
-  printTree()
+  //printTree()
 
 }
 
 const addOutcome = (outcome : Outcome) => {
 
-  let outcomeNode : Node  = 
+  let outcomeNode : OutcomeNode  = 
   {
     value: outcome,
     children: [],
@@ -125,7 +138,6 @@ const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
   let matchingNodes : Node[] = []
 
   const helperGetNode = (node : Node) => {
-    console.log("helperGetNode")
 
     if (node.value && node.value.title == input?.title) {
       matchingNodes.push(node)
@@ -164,4 +176,35 @@ const printTree = () => {
       }) 
     })      
   })
+}
+
+export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) => {
+
+
+  let difference = newValue - inputOutcome.outcomeBudget
+  inputOutcome.outcomeBudget = newValue
+
+  let siblings : OutcomeNode[] = rootNode.children.filter( outcomeNode => {
+    return outcomeNode.value != inputOutcome
+  })
+
+  let delta = difference / siblings.length
+
+  let impactedOutcomes : Outcome[] = []
+  siblings.forEach( sibling => {
+    impactedOutcomes.push(sibling.value)
+  })
+
+  impactedOutcomes.map(outcome => {
+
+    outcome.outcomeBudget -= delta
+    outcome.key += inputOutcome.key.toString()
+
+    return outcome
+  })
+
+}
+
+export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : number) => {
+  
 }
