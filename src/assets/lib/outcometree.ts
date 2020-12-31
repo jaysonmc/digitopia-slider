@@ -62,16 +62,15 @@ export const init = (outcomes : Outcome[]) => {
   })
 
   // get the impacted sibling nodes from the duplicate nodes & append impacted suboutcomes to the duplicate suboutcome
-  duplicateSuboutcomeNodes.forEach( duplicateSubOutcome => {
+  duplicateSuboutcomeNodes.forEach( duplicateSubOutcomeNode => {
 
-    let otherDuplicates = duplicateSuboutcomeNodes.filter( duplicate => duplicate.parent != duplicateSubOutcome.parent)
+    let implactedSuboutcome = duplicateSuboutcomeNodes.filter( duplicate => duplicate.parent != duplicateSubOutcomeNode.parent)
+    console.dir(implactedSuboutcome)
 
-    otherDuplicates.forEach( duplicate => {
-      let siblings : Node[] = getSiblings(duplicate)
-
-      siblings.forEach( sibling => {
-        console.log("Pushing " + sibling.value.title + " to " + duplicate.value.title)
-        duplicate.children.push(sibling)
+    implactedSuboutcome.forEach( duplicate => { 
+      let siblings = duplicate.parent?.children.filter( node => node != duplicate)
+      siblings?.forEach( sibling => {
+        duplicateSubOutcomeNode.children.push(sibling)
       })
     })
   })
@@ -126,8 +125,9 @@ const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
   let matchingNodes : Node[] = []
 
   const helperGetNode = (node : Node) => {
+    console.log("helperGetNode")
 
-    if (node.value && node.value.title == input.title) {
+    if (node.value && node.value.title == input?.title) {
       matchingNodes.push(node)
     }
 
@@ -150,27 +150,6 @@ const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
 
   return matchingNodes
   
-}
-
-// return the sibling nodes to a given node
-// TO-DO Not properly returning siblings atm
-const getSiblings = (node : Node) : Node[] => {
-
-  let siblingNodes : Node[] = [];
-
-  let matchingNodes : Node[] = getNodes(node.value)
-
-  matchingNodes.forEach( node => {
-    let parentNode = node.parent
-
-    parentNode?.children.forEach( node => {
-      if (node != node) {
-        siblingNodes.push(node)
-      }
-    })
-  })  
-
-  return siblingNodes
 }
 
 const printTree = () => {
