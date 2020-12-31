@@ -75,23 +75,10 @@ export default {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
     computeBudget(retObj) {
-
-      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], retObj.newOutcomeFunding)
-
-      /*
-      let newVal = retObj.newOutcomeFunding;
-      let oldVal = retObj.oldOutcomeFunding;
-
-      let adjustedOutcome = this.outcomes[retObj.index];
-
-      adjustedOutcome.outcomeBudget = retObj.newOutcomeFunding;
-
-      if (this.freezeSpending == "frozen") {
-        this.adjustSiblingBudgets(retObj, newVal - oldVal);
-      }
-      */
+      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], parseInt(retObj.newOutcomeFunding))
     },
     adjustSiblingBudgets(retObj, difference) {
+
       const diffVal = difference / (this.outcomes.length - 1);
       const adjustedOutcome = this.outcomes[retObj.index]
 
@@ -141,6 +128,9 @@ export default {
       });
     },
     adjustSubBudgets(retObj) {
+      outcomeTree.adjustSuboutcomeValue(retObj.adjustedSuboutcome, parseInt(retObj.newOutcomeFunding))
+
+      /*
       const updateAdjustedSliders = (outcome, retObj) => {
         let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter(
           (suboutcome) => {
@@ -207,6 +197,7 @@ export default {
           });
         });
       }
+      */
     },
   },
   data() {

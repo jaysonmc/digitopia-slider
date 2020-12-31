@@ -148,7 +148,7 @@ const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
     }
 
     node.children.forEach( node => {
-      stack.push(node)
+      stack.push(node as Node)
     })
     
     let nextNode = stack.shift()
@@ -158,7 +158,7 @@ const getNodes = (input : Suboutcome | Outcome | null) : Node[] => {
     helperGetNode(nextNode)
   }
 
-  helperGetNode(rootNode)
+  helperGetNode(rootNode as Node)
 
   return matchingNodes
   
@@ -180,9 +180,9 @@ const printTree = () => {
 
 export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) => {
 
-
   let difference = newValue - inputOutcome.outcomeBudget
   inputOutcome.outcomeBudget = newValue
+  inputOutcome.key += inputOutcome.key.toString()
 
   let siblings : OutcomeNode[] = rootNode.children.filter( outcomeNode => {
     return outcomeNode.value != inputOutcome
@@ -207,4 +207,37 @@ export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) =>
 
 export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : number) => {
   
+  let difference = newValue - suboutcome.subOutcomeFunding
+  
+  let nodes = getNodes(suboutcome)
+
+  nodes.forEach( node => {
+    
+    let suboutcomeNode = node as SuboutcomeNode
+
+    suboutcomeNode.value.subOutcomeFunding = newValue
+    suboutcomeNode.value.key = node?.value?.key + suboutcome.key.toString()
+  })
+
+  nodes.forEach( node => {
+    let siblings : Node[] | undefined = node.parent?.children.filter( lNode => lNode != node)
+    
+    if (!siblings) return
+
+    let delta = (difference / siblings.length)
+
+    siblings?.forEach( sibling => {
+
+      let siblingNode = sibling as SuboutcomeNode
+
+      siblingNode.value.subOutcomeFunding -= delta
+      siblingNode.value.key += suboutcome.key.toString()
+
+    })
+
+  })
+  
+
+
+
 }
