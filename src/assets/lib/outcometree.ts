@@ -28,10 +28,12 @@ interface Node {
 
 interface OutcomeNode extends Node {
   value: Outcome
+  parent: RootNode
 }
 
 interface SuboutcomeNode extends Node {
   value: Suboutcome
+  parent: OutcomeNode
 }
 
 interface RootNode extends Node {
@@ -48,10 +50,6 @@ var rootNode : RootNode = {
 
 export const init = (outcomes : Outcome[]) => {
   
-  const duplicate = (nodeArg : Node, nodeArr : Node[]) => {
-    return (nodeArr.filter( node => JSON.stringify(node.value) == JSON.stringify(nodeArg.value)).length >= 1)
-  }
-
   // build the tree
   outcomes.forEach( outcome => {
     addOutcome(outcome)
@@ -60,36 +58,109 @@ export const init = (outcomes : Outcome[]) => {
     })
   })
 
-  // find duplcate suboutcomes
-  let duplicateSuboutcomeNodes : Node[] = []
-
-  outcomes.forEach( outcome => {
-    outcome.subOutcomes.forEach( suboutcome => {
-      let foundSuboutcomeNodes : Node[] = getNodes(suboutcome)
-      if (foundSuboutcomeNodes.length > 1) {
-        foundSuboutcomeNodes.forEach(suboutcomeNode => {
-          if (!duplicate(suboutcomeNode, duplicateSuboutcomeNodes))
-            duplicateSuboutcomeNodes.push(suboutcomeNode)
-        })
-      }
-    })
-  })
-
-  // get the impacted sibling nodes from the duplicate nodes & append impacted suboutcomes to the duplicate suboutcome
-  duplicateSuboutcomeNodes.forEach( duplicateSubOutcomeNode => {
-
-    let implactedSuboutcome = duplicateSuboutcomeNodes.filter( duplicate => duplicate.parent != duplicateSubOutcomeNode.parent)
-
-    implactedSuboutcome.forEach( duplicate => { 
-      let siblings = duplicate.parent?.children.filter( node => node != duplicate)
-      siblings?.forEach( sibling => {
-        duplicateSubOutcomeNode.children.push(sibling)
-      })
-    })
-  })
-
   //printTree()
 
+}
+
+export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) => {
+
+  let difference = newValue - inputOutcome.outcomeBudget
+  inputOutcome.outcomeBudget = newValue
+  inputOutcome.key += inputOutcome.key.toString()
+
+  let impactedSuboutcomeNodesArray : SuboutcomeNode[] = []
+  inputOutcome.subOutcomes.forEach( suboutcome => {
+    suboutcome.subOutcomeFunding += (difference/inputOutcome.subOutcomes.length)
+
+    let impactedSuboutcomeNodes = getImpactedSuboutcomes(suboutcome)
+    if (impactedSuboutcomeNodes.length > 0) {
+      impactedSuboutcomeNodes.forEach(impactedSuboutcomeNode => {
+        updateSuboutcomeNode(impactedSuboutcomeNode, newValue)
+        impactedSuboutcomeNodesArray.push(impactedSuboutcomeNode)
+      })
+    }
+
+  })
+
+  let siblings : OutcomeNode[] = rootNode.children.filter( outcomeNode => {
+    return outcomeNode.value != inputOutcome
+  })
+
+  // If there are no impacted suboutcomes, update the the other outcomes
+  if (impactedSuboutcomeNodesArray.length == 0) {
+    updateSiblingOutcomes(siblings, difference / siblings.length)
+  }
+  // If there are impacted nodes, then skip the nodes that have already have their values set (as corresponding suboutcomes must remain in sync)
+  else {
+    impactedSuboutcomeNodesArray.forEach( impactedSuboutcome => {
+
+      let delta = difference / rootNode.children.length-1
+      let impactedParent = impactedSuboutcome.parent
+      impactedParent.value.outcomeBudget -= delta
+      impactedParent.value.key += "1"
+
+      // TO-DO Find what value to plug in here
+      updateSuboutcomeNode(impactedSuboutcome, )
+    })
+  }
+}
+
+const getImpactedSuboutcomes = (suboutcome : Suboutcome) : SuboutcomeNode[] => {
+  return getNodes(suboutcome).filter( suboutcomenode => suboutcomenode.value != suboutcome) as SuboutcomeNode[]
+}
+
+export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : number) => {
+  
+  let nodes = getNodes(suboutcome)
+
+  nodes.forEach( node => {
+    updateSuboutcomeNode(node as SuboutcomeNode, newValue)
+  })
+}
+
+const updateSuboutcomeNode = (node : SuboutcomeNode, newValue : number) => {
+
+  let suboutcomeNode = node as SuboutcomeNode
+  let difference = newValue - suboutcomeNode.value.subOutcomeFunding
+
+  // update the node
+  suboutcomeNode.value.subOutcomeFunding = newValue
+  suboutcomeNode.value.key = node?.value?.key + "1"
+
+  updateSuboutcomeSiblings(node, difference)
+}
+
+const updateSiblingOutcomes = (outcomeNodeSiblings : OutcomeNode[], delta : number) => {
+
+  let impactedOutcomes : Outcome[] = []
+  outcomeNodeSiblings.forEach( sibling => {
+    impactedOutcomes.push(sibling.value)
+  })
+
+  impactedOutcomes.forEach(outcome => {
+    outcome.outcomeBudget -= delta
+    outcome.key += outcome.key.toString()
+
+    outcome.subOutcomes.forEach( suboutcome => {
+      suboutcome.subOutcomeFunding -= (delta/outcome.subOutcomes.length)
+    })
+
+  })
+}
+
+const updateSuboutcomeSiblings = (node : SuboutcomeNode, difference : number) => {
+
+  let siblings : Node[] | undefined = node.parent?.children.filter( lNode => lNode != node)
+
+  let delta = (difference / siblings.length)
+
+  // update the siblings of the suboutcome
+  siblings?.forEach( sibling => {
+    let siblingNode = sibling as SuboutcomeNode
+
+    siblingNode.value.subOutcomeFunding -= delta
+    siblingNode.value.key += "1"
+  })
 }
 
 const addOutcome = (outcome : Outcome) => {
@@ -176,68 +247,4 @@ const printTree = () => {
       }) 
     })      
   })
-}
-
-export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) => {
-
-  let difference = newValue - inputOutcome.outcomeBudget
-  inputOutcome.outcomeBudget = newValue
-  inputOutcome.key += inputOutcome.key.toString()
-
-  let siblings : OutcomeNode[] = rootNode.children.filter( outcomeNode => {
-    return outcomeNode.value != inputOutcome
-  })
-
-  let delta = difference / siblings.length
-
-  let impactedOutcomes : Outcome[] = []
-  siblings.forEach( sibling => {
-    impactedOutcomes.push(sibling.value)
-  })
-
-  impactedOutcomes.map(outcome => {
-
-    outcome.outcomeBudget -= delta
-    outcome.key += inputOutcome.key.toString()
-
-    return outcome
-  })
-
-}
-
-export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : number) => {
-  
-  let difference = newValue - suboutcome.subOutcomeFunding
-  
-  let nodes = getNodes(suboutcome)
-
-  nodes.forEach( node => {
-    
-    let suboutcomeNode = node as SuboutcomeNode
-
-    suboutcomeNode.value.subOutcomeFunding = newValue
-    suboutcomeNode.value.key = node?.value?.key + suboutcome.key.toString()
-  })
-
-  nodes.forEach( node => {
-    let siblings : Node[] | undefined = node.parent?.children.filter( lNode => lNode != node)
-    
-    if (!siblings) return
-
-    let delta = (difference / siblings.length)
-
-    siblings?.forEach( sibling => {
-
-      let siblingNode = sibling as SuboutcomeNode
-
-      siblingNode.value.subOutcomeFunding -= delta
-      siblingNode.value.key += suboutcome.key.toString()
-
-    })
-
-  })
-  
-
-
-
 }

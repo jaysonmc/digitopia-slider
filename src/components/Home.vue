@@ -77,41 +77,6 @@ export default {
     computeBudget(retObj) {
       outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], parseInt(retObj.newOutcomeFunding))
     },
-    adjustSiblingBudgets(retObj, difference) {
-
-      const diffVal = difference / (this.outcomes.length - 1);
-      const adjustedOutcome = this.outcomes[retObj.index]
-
-      let impactedSubOutcomes_retObjArray = []
-
-      this.outcomes.forEach((outcome) => {
-        if (outcome.title != adjustedOutcome.title) {
-          outcome.outcomeBudget = outcome.outcomeBudget - diffVal
-          outcome.subOutcomes.map( suboutcome => {
-            const subDiffVal = diffVal / outcome.subOutcomes.length
-
-            if (this.getRelevantOutcomes(suboutcome).length > 1 && (outcome.title != suboutcome.parent)) {
-              impactedSubOutcomes_retObjArray.push({
-                oldOutcomeFunding: suboutcome.subOutcomeFunding,
-                newOutcomeFunding: suboutcome.subOutcomeFunding + subDiffVal,
-                sourceOutcome: outcome.title,
-                index: suboutcome.index,
-                difference: subDiffVal,
-                adjustedSuboutcome: suboutcome
-              })
-            } 
-            
-            suboutcome.subOutcomeFunding -= subDiffVal
-            outcome.key = outcome.key + adjustedOutcome.key + "";
-          })
-        }
-      });
-
-      impactedSubOutcomes_retObjArray.forEach(retObj => {
-        this.adjustSubBudgets(retObj)
-      })
-
-    },
     setAnalysis() {
       this.$refs.slider.forEach((component) => {
         if (this.showAnalysis == "analysis") component.setAnalysis(true);
