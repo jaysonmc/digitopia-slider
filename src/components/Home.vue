@@ -75,7 +75,7 @@ export default {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
     computeBudget(retObj) {
-      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], parseInt(retObj.newOutcomeFunding))
+      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], parseInt(retObj.newOutcomeFunding), this.freezeSpending == "frozen")
     },
     setAnalysis() {
       this.$refs.slider.forEach((component) => {
@@ -83,86 +83,17 @@ export default {
         else component.setAnalysis(false);
       });
     },
-    getRelevantOutcomes(adjustedSuboutcome) {
-      return this.outcomes.filter((outcome) => {
-        return (
-          outcome.subOutcomes.filter((suboutcome) => {
-            return suboutcome.title == adjustedSuboutcome.title;
-          }).length > 0
-        );
-      });
-    },
     adjustSubBudgets(retObj) {
       outcomeTree.adjustSuboutcomeValue(retObj.adjustedSuboutcome, parseInt(retObj.newOutcomeFunding))
-
-      /*
-      const updateAdjustedSliders = (outcome, retObj) => {
-        let directlyAdjustedSubOutcomes = outcome.subOutcomes.filter(
-          (suboutcome) => {
-            return suboutcome.title == retObj.adjustedSuboutcome.title;
-          }
-        );
-
-        directlyAdjustedSubOutcomes.map((suboutcome) => {
-          suboutcome.subOutcomeFunding = retObj.newOutcomeFunding;
-          suboutcome.key =suboutcome.key + outcome.key + ""
-        });
-      };
-
-      // This function will update a suboutcome,
-      const adjustSubOutcomesAndSiblings = (retObj, skipSelf) => {
-        this.getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
-          if (skipSelf && retObj.sourceOutcome == outcome.title) {
-            return;
-          }
-
-          updateAdjustedSliders(outcome, retObj);
-
-          let nonMatchingSubOutcomes = outcome.subOutcomes.filter(
-            (suboutcome) => {
-              return suboutcome.title != retObj.adjustedSuboutcome.title;
-            }
-          );
-
-          nonMatchingSubOutcomes.map((suboutcome) => {
-            let difference =
-              retObj.newOutcomeFunding - retObj.oldOutcomeFunding;
-            const delta = difference / nonMatchingSubOutcomes.length;
-
-            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
-            suboutcome.key =  suboutcome.key + outcome.key + ""
-          });
-        });
-      };
-
-      if (this.getRelevantOutcomes(retObj.adjustedSuboutcome).length > 1) {
-        adjustSubOutcomesAndSiblings(retObj, false);
-      } else {
-        this.getRelevantOutcomes(retObj.adjustedSuboutcome).forEach((outcome) => {
-          updateAdjustedSliders(outcome, retObj);
-
-          let impactedSubOutcomes = outcome.subOutcomes.filter((suboutcome) => {
-            return suboutcome.title != retObj.adjustedSuboutcome.title;
-          });
-
-          impactedSubOutcomes.map((suboutcome) => {
-            const delta = retObj.difference / impactedSubOutcomes.length;
-
-            // update the outcome being currently iterated over
-            suboutcome.subOutcomeFunding = suboutcome.subOutcomeFunding - delta;
-            suboutcome.key = suboutcome.key + retObj.adjustedSuboutcome.key + ""
-
-            // modify the retObj to represent the suboutcome that was just updated
-            retObj.adjustedSuboutcome = suboutcome;
-            retObj.newOutcomeFunding = suboutcome.subOutcomeFunding;
-            retObj.oldOutcomeFunding = retObj.newOutcomeFunding + delta;
-
-            // pass the updated retObj to the function to update a given suboutcome
-            adjustSubOutcomesAndSiblings(retObj, true);
-          });
-        });
-      }
-      */
+    },
+  },
+  computed: {
+    totalSpent() {
+      let total = 0;
+      this.outcomes.forEach(function(item) {
+        total += parseFloat(item.outcomeBudget);
+      });
+      return total.toFixed(2);
     },
   },
   data() {
@@ -308,15 +239,6 @@ export default {
       freezeSpending: "not_frozen",
       showAnalysis: "no_analysis",
     };
-  },
-  computed: {
-    totalSpent() {
-      let total = 0;
-      this.outcomes.forEach(function(item) {
-        total += parseFloat(item.outcomeBudget);
-      });
-      return total.toFixed(2);
-    },
   },
   mounted() {
     this.init();

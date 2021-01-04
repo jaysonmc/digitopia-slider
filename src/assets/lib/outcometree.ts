@@ -62,7 +62,7 @@ export const init = (outcomes : Outcome[]) => {
 
 }
 
-export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) => {
+export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number, cascade : boolean = false) => {
 
   let difference = newValue - inputOutcome.outcomeBudget
 
@@ -72,15 +72,13 @@ export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) =>
 
   updateOutcome(modifiedOutcomeNode, difference, updatedSuboutcomes)
 
+  if (!cascade) return
+
   let otherOutcomes = rootNode.children.filter( outcome => outcome.value != inputOutcome);
 
   otherOutcomes.forEach( outcome => {
     updateOutcome(outcome, -(difference/rootNode.children.length-1), updatedSuboutcomes)
   })
-}
-
-const getImpactedSuboutcomes = (suboutcome : Suboutcome) : SuboutcomeNode[] => {
-  return getNodes(suboutcome).filter( suboutcomenode => suboutcomenode.value != suboutcome) as SuboutcomeNode[]
 }
 
 export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : number) => {
@@ -141,24 +139,6 @@ const updateSuboutcomeNode = (node : SuboutcomeNode, newValue : number) => {
   suboutcomeNode.value.key = node?.value?.key + "1"
 
   updateSuboutcomeSiblings(node, difference)
-}
-
-const updateSiblingOutcomes = (outcomeNodeSiblings : OutcomeNode[], delta : number) => {
-
-  let impactedOutcomes : Outcome[] = []
-  outcomeNodeSiblings.forEach( sibling => {
-    impactedOutcomes.push(sibling.value)
-  })
-
-  impactedOutcomes.forEach(outcome => {
-    outcome.outcomeBudget -= delta
-    outcome.key += outcome.key.toString()
-
-    outcome.subOutcomes.forEach( suboutcome => {
-      suboutcome.subOutcomeFunding -= (delta/outcome.subOutcomes.length)
-    })
-
-  })
 }
 
 const updateSuboutcomeSiblings = (node : SuboutcomeNode, difference : number) => {
