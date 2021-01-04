@@ -65,44 +65,18 @@ export const init = (outcomes : Outcome[]) => {
 export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number) => {
 
   let difference = newValue - inputOutcome.outcomeBudget
-  inputOutcome.outcomeBudget = newValue
-  inputOutcome.key += inputOutcome.key.toString()
 
-  let impactedSuboutcomeNodesArray : SuboutcomeNode[] = []
-  inputOutcome.subOutcomes.forEach( suboutcome => {
-    suboutcome.subOutcomeFunding += (difference/inputOutcome.subOutcomes.length)
+  let updatedSuboutcomes : SuboutcomeNode[] = []
 
-    let impactedSuboutcomeNodes = getImpactedSuboutcomes(suboutcome)
-    if (impactedSuboutcomeNodes.length > 0) {
-      impactedSuboutcomeNodes.forEach(impactedSuboutcomeNode => {
-        updateSuboutcomeNode(impactedSuboutcomeNode, newValue)
-        impactedSuboutcomeNodesArray.push(impactedSuboutcomeNode)
-      })
-    }
+  let modifiedOutcomeNode : OutcomeNode = rootNode.children.filter( outcome => outcome.value == inputOutcome)[0];
 
+  updateOutcome(modifiedOutcomeNode, difference, updatedSuboutcomes)
+
+  let otherOutcomes = rootNode.children.filter( outcome => outcome.value != inputOutcome);
+
+  otherOutcomes.forEach( outcome => {
+    updateOutcome(outcome, -(difference/rootNode.children.length-1), updatedSuboutcomes)
   })
-
-  let siblings : OutcomeNode[] = rootNode.children.filter( outcomeNode => {
-    return outcomeNode.value != inputOutcome
-  })
-
-  // If there are no impacted suboutcomes, update the the other outcomes
-  if (impactedSuboutcomeNodesArray.length == 0) {
-    updateSiblingOutcomes(siblings, difference / siblings.length)
-  }
-  // If there are impacted nodes, then skip the nodes that have already have their values set (as corresponding suboutcomes must remain in sync)
-  else {
-    impactedSuboutcomeNodesArray.forEach( impactedSuboutcome => {
-
-      let delta = difference / rootNode.children.length-1
-      let impactedParent = impactedSuboutcome.parent
-      impactedParent.value.outcomeBudget -= delta
-      impactedParent.value.key += "1"
-
-      // TO-DO Find what value to plug in here
-      updateSuboutcomeNode(impactedSuboutcome, )
-    })
-  }
 }
 
 const getImpactedSuboutcomes = (suboutcome : Suboutcome) : SuboutcomeNode[] => {
@@ -115,6 +89,45 @@ export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : numbe
 
   nodes.forEach( node => {
     updateSuboutcomeNode(node as SuboutcomeNode, newValue)
+  })
+}
+
+const getMatchingSuboutcomes = (array1: Node[], array2: Node[]) : Node[] => {
+  let previouslyUpdatedSuboutcomes : Node[] = []
+  array1.forEach( suboutcomeNode1 => { 
+    let foundSuboutcomes : Node[] = array2.filter( suboutcomeNode2 => {
+      suboutcomeNode2 == suboutcomeNode1
+    })
+
+    if (foundSuboutcomes.length > 1) {
+      console.error("getMatchingSuboutcomes: Outcome has two identical suboutcomes")
+    }
+
+    if (foundSuboutcomes.length == 1) {
+      previouslyUpdatedSuboutcomes.push(foundSuboutcomes[0])
+    }
+ 
+  })
+  return previouslyUpdatedSuboutcomes
+}
+
+const updateOutcome = (OutcomeNode : OutcomeNode, difference : number, modifiedSuboutcomes : SuboutcomeNode[]) => {
+
+  OutcomeNode.value.outcomeBudget += difference
+  OutcomeNode.value.key += "1"
+
+  let previouslyUpdatedSuboutcomes : Node[] = getMatchingSuboutcomes(modifiedSuboutcomes, OutcomeNode.children)
+
+  OutcomeNode.children.forEach( suboutcomeNode => {
+
+    if (!previouslyUpdatedSuboutcomes.includes(suboutcomeNode)) {
+      let _suboutcomeNode = suboutcomeNode as SuboutcomeNode
+    
+      _suboutcomeNode.value.subOutcomeFunding += difference/(OutcomeNode.children.length - previouslyUpdatedSuboutcomes.length)
+      _suboutcomeNode.value.key += "1"
+
+      modifiedSuboutcomes.push(_suboutcomeNode)
+    }
   })
 }
 
