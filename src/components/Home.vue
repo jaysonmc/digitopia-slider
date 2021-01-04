@@ -75,7 +75,7 @@ export default {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
     computeBudget(retObj) {
-      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], parseInt(retObj.newOutcomeFunding), this.freezeSpending == "frozen")
+      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], parseInt(retObj.newOutcomeFunding), (this.freezeSpending == "frozen"))
     },
     setAnalysis() {
       this.$refs.slider.forEach((component) => {
@@ -84,7 +84,7 @@ export default {
       });
     },
     adjustSubBudgets(retObj) {
-      outcomeTree.adjustSuboutcomeValue(retObj.adjustedSuboutcome, parseInt(retObj.newOutcomeFunding))
+      outcomeTree.adjustSuboutcomeValue(retObj.adjustedSuboutcome, parseInt(retObj.newOutcomeFunding), (this.freezeSpending == "frozen"))
     },
   },
   computed: {

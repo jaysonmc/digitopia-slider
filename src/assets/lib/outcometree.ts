@@ -66,6 +66,8 @@ export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number, ca
 
   let difference = newValue - inputOutcome.outcomeBudget
 
+  console.log("Moving " + inputOutcome.title + " to " + newValue + " from " + inputOutcome.outcomeBudget + " for a difference of " + difference)
+
   let updatedSuboutcomes : SuboutcomeNode[] = []
 
   let modifiedOutcomeNode : OutcomeNode = rootNode.children.filter( outcome => outcome.value == inputOutcome)[0];
@@ -77,16 +79,17 @@ export const adjustOutcomeValue = (inputOutcome : Outcome, newValue : number, ca
   let otherOutcomes = rootNode.children.filter( outcome => outcome.value != inputOutcome);
 
   otherOutcomes.forEach( outcome => {
-    updateOutcome(outcome, -(difference/rootNode.children.length-1), updatedSuboutcomes)
+    console.log("Moving " + outcome.value.title + " by " + outcome.value.outcomeBudget + " to " + -(difference/(rootNode.children.length-1)))
+    updateOutcome(outcome, -(difference/(rootNode.children.length-1)), updatedSuboutcomes)
   })
 }
 
-export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : number) => {
+export const adjustSuboutcomeValue = ( suboutcome : Suboutcome, newValue : number, cascade : boolean = false) => {
   
   let nodes = getNodes(suboutcome)
 
   nodes.forEach( node => {
-    updateSuboutcomeNode(node as SuboutcomeNode, newValue)
+    updateSuboutcomeNode(node as SuboutcomeNode, newValue, cascade)
   })
 }
 
@@ -129,7 +132,7 @@ const updateOutcome = (OutcomeNode : OutcomeNode, difference : number, modifiedS
   })
 }
 
-const updateSuboutcomeNode = (node : SuboutcomeNode, newValue : number) => {
+const updateSuboutcomeNode = (node : SuboutcomeNode, newValue : number, cascade : boolean = false) => {
 
   let suboutcomeNode = node as SuboutcomeNode
   let difference = newValue - suboutcomeNode.value.subOutcomeFunding
@@ -138,7 +141,13 @@ const updateSuboutcomeNode = (node : SuboutcomeNode, newValue : number) => {
   suboutcomeNode.value.subOutcomeFunding = newValue
   suboutcomeNode.value.key = node?.value?.key + "1"
 
-  updateSuboutcomeSiblings(node, difference)
+  if (cascade) {
+    updateSuboutcomeSiblings(node, difference) 
+  }
+  else {
+    node.parent.value.outcomeBudget += difference
+    node.parent.value.key += "1"
+  }
 }
 
 const updateSuboutcomeSiblings = (node : SuboutcomeNode, difference : number) => {
