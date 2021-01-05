@@ -36,6 +36,18 @@
           Analysis
         </b-form-checkbox>
       </div>
+      <div class="row checkbox-div">
+        <b-form-checkbox
+          id="checkbox-depts"
+          v-model="showDepts"
+          name="checkbox-depts"
+          value="show_depts"
+          unchecked-value="hide_depts"
+          @change="setShowDepartments()"
+        >
+          Show Departments
+        </b-form-checkbox>
+      </div>
       <budget-slider
         v-for="(item, index) in this.outcomes"
         ref="slider"
@@ -84,6 +96,12 @@ export default {
       this.$refs.slider.forEach((component) => {
         if (this.showAnalysis == "analysis") component.setAnalysis(true);
         else component.setAnalysis(false);
+      });
+    },
+    setShowDepartments() {
+      this.$refs.slider.forEach((component) => {
+        if (this.showDepts == "show_depts") component.setShowDepts(true);
+        else component.setShowDepts(false);
       });
     },
     adjustSubBudgets(retObj) {
@@ -223,6 +241,7 @@ export default {
       budget: 100,
       freezeSpending: "not_frozen",
       showAnalysis: "no_analysis",
+      showDepts: "hide_depts",
     };
   },
   mounted() {

@@ -126,6 +126,11 @@ export default {
     setAnalysis(bool) {
       this.showAnalysis = bool
     },
+    setShowDepts(bool) {
+      this.$refs.subslider.forEach((component) => {
+        component.setShowDepts(bool);
+      });
+    },
     computeSubBudgets(retObj) {
       retObj.adjustedSuboutcome = this.subOutcomes[retObj.index]
       this.$emit('adjust-sub-budgets', retObj)
