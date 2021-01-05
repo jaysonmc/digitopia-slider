@@ -54,7 +54,7 @@
 
 <script>
 import BudgetSlider from "./BudgetSlider.vue";
-import * as outcomeTree from '../assets/lib/outcometree.ts'
+import * as outcomeTree from "../assets/lib/outcometree.ts";
 
 export default {
   name: "HelloWorld",
@@ -68,14 +68,17 @@ export default {
         return item;
       });
 
-      outcomeTree.init(this.outcomes)
-
+      outcomeTree.init(this.outcomes);
     },
     computedOutcome(retObj) {
       this.outcomes[retObj.index].computedOutcome = retObj.computedOutcome;
     },
     computeBudget(retObj) {
-      outcomeTree.adjustOutcomeValue(this.outcomes[retObj.index], parseInt(retObj.newOutcomeFunding), (this.freezeSpending == "frozen"))
+      outcomeTree.adjustOutcomeValue(
+        this.outcomes[retObj.index],
+        parseInt(retObj.newOutcomeFunding),
+        this.freezeSpending == "frozen"
+      );
     },
     setAnalysis() {
       this.$refs.slider.forEach((component) => {
@@ -84,7 +87,11 @@ export default {
       });
     },
     adjustSubBudgets(retObj) {
-      outcomeTree.adjustSuboutcomeValue(retObj.adjustedSuboutcome, parseInt(retObj.newOutcomeFunding), (this.freezeSpending == "frozen"))
+      outcomeTree.adjustSuboutcomeValue(
+        retObj.adjustedSuboutcome,
+        parseInt(retObj.newOutcomeFunding),
+        this.freezeSpending == "frozen"
+      );
     },
   },
   computed: {
@@ -116,7 +123,7 @@ export default {
                 "Dept of Offense",
                 "Dept of Spending",
                 "Dept of Rule Setting",
-              ]
+              ],
             },
             {
               title: "Suboutcome 2",
@@ -127,29 +134,22 @@ export default {
                 "Dept of Old",
                 "Dept of Collection",
                 "Dept of Rule Setting",
-              ]
+              ],
             },
             {
               title: "Suboutcome 8",
               key: "8",
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
-              depts: [
-                "Dept of Trends",
-                "Dept of Rule Setting",
-              ]
+              depts: ["Dept of Trends", "Dept of Rule Setting"],
             },
-            
+
             {
               title: "Suboutcome 9",
               key: "9",
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
-              depts: [
-                "Dept of Trends",
-                "Dept of Collection",
-                "Dept of Old",
-              ]
+              depts: ["Dept of Trends", "Dept of Collection", "Dept of Old"],
             },
           ],
         },
@@ -166,20 +166,14 @@ export default {
               key: "3",
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
-              depts: [
-                "Dept of Rule Setting",
-                "Dept of Departments"
-              ]
+              depts: ["Dept of Rule Setting", "Dept of Departments"],
             },
             {
               title: "Suboutcome 4",
               key: "4",
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
-              depts: [
-                "Dept of Old",
-                "Dept of Collection",
-              ]
+              depts: ["Dept of Old", "Dept of Collection"],
             },
             {
               title: "Suboutcome 7",
@@ -190,7 +184,7 @@ export default {
                 "Dept of Old",
                 "Dept of Collection",
                 "Dept of Departments",
-              ]
+              ],
             },
           ],
         },
@@ -207,30 +201,21 @@ export default {
               key: "4",
               subOutcomeFunding: undefined,
               parent: "Climate",
-              depts: [
-                "Dept of Spending",
-                "Dept of Old",
-              ]
+              depts: ["Dept of Spending", "Dept of Old"],
             },
             {
               title: "Suboutcome 5",
               key: "5",
               subOutcomeFunding: undefined,
               parent: "Climate",
-              depts: [
-                "Dept of Rule Setting",
-                "Dept of Collection",
-              ]
+              depts: ["Dept of Rule Setting", "Dept of Collection"],
             },
             {
               title: "Suboutcome 6",
               key: "6",
               subOutcomeFunding: undefined,
               parent: "Climate",
-              depts: [
-                "Dept of Spending",
-                "Dept of Old",
-              ]
+              depts: ["Dept of Spending", "Dept of Old"],
             },
           ],
         },
