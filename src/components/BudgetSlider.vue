@@ -1,8 +1,7 @@
 <template>
-  <div class="bordered-div">
-      <div class="bordered-div">
+  <div>
+      <div>
         <h2>{{title}}</h2>
-        <hr />
         <b-form-group>
           <b-input-group>
             <b-input-group-prepend is-text class="text-monospace">
@@ -177,7 +176,11 @@ export default {
 </script>
 
 <style scoped>
-
+h2 {
+  font-weight: 600;
+  margin: 4rem 0 1rem 0;
+  text-align: left;
+}
 #div-budget {
   margin-top: 10px;
 }
@@ -190,7 +193,13 @@ export default {
   margin-top: 5px;
   margin-bottom: 5px;
 }
+.input-group {
+  margin: 0 0 1rem 0;
+}
+.input-group .input-group-prepend .input-group-text {
+  background: rgba(216, 230, 251, 1);
+}
 .form-group .input-group-prepend .input-group-text {
-  width: 165px;
+  width: 201px;
 }
 </style>

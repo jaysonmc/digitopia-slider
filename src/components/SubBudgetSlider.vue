@@ -72,9 +72,8 @@ export default {
 
 <style scoped>
 #sub-slider-input-group {
-  width: 80%;
-  float: right;
-  margin-top: 10px;
-  margin-bottom: 5px;
+  width: 100%;
+  margin-top: .25rem;
+  margin-bottom: .25rem;
 }
 </style>
