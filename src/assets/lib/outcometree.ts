@@ -98,19 +98,20 @@ const updateOutcome = (
   difference: number,
   modifiedSuboutcomes: SuboutcomeNode[]
 ) => {
-  OutcomeNode.value.outcomeBudget += difference;
-  OutcomeNode.value.key += "1";
 
-    let previouslyUpdatedSuboutcomes: SuboutcomeNode[] = getMatchingSuboutcomes(
+  let previouslyUpdatedSuboutcomes: SuboutcomeNode[] = getMatchingSuboutcomes(
     modifiedSuboutcomes,
     OutcomeNode.children
   );
+
+  OutcomeNode.value.outcomeBudget += difference;
+  OutcomeNode.value.key += "1";
   
   OutcomeNode.children.forEach((suboutcomeNode) => {
     if (!previouslyUpdatedSuboutcomes.includes(suboutcomeNode)) {
       suboutcomeNode.value.subOutcomeFunding +=
         difference /
-        (OutcomeNode.children.length - previouslyUpdatedSuboutcomes.length);
+        (OutcomeNode.children.length - (previouslyUpdatedSuboutcomes.length/2));
         suboutcomeNode.value.key += "1";
 
         modifiedSuboutcomes.push(suboutcomeNode); 
@@ -118,8 +119,7 @@ const updateOutcome = (
       let previouslyUpdatedSiblingNode : SuboutcomeNode[] = previouslyUpdatedSuboutcomes.filter( previouslyUpdatedSiblingNode => {
         return previouslyUpdatedSiblingNode.parent !== suboutcomeNode.parent
       } )
-
-      adjustSuboutcomeValue(suboutcomeNode.value, previouslyUpdatedSiblingNode[0].value.subOutcomeFunding, false)
+      adjustSuboutcomeValue(suboutcomeNode.value, previouslyUpdatedSiblingNode[0].value.subOutcomeFunding, true)
     }
     
   });
