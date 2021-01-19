@@ -161,19 +161,11 @@ export default {
               ],
             },
             {
-              title: "Suboutcome 8",
-              key: "8",
+              title: "Suboutcome 3",
+              key: "3",
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
               depts: ["Dept of Trends", "Dept of Rule Setting"],
-            },
-
-            {
-              title: "Suboutcome 9",
-              key: "9",
-              subOutcomeFunding: undefined,
-              parent: "Reconciliation",
-              depts: ["Dept of Trends", "Dept of Collection", "Dept of Old"],
             },
           ],
         },
@@ -221,8 +213,8 @@ export default {
           key: 3,
           subOutcomes: [
             {
-              title: "Suboutcome 4",
-              key: "4",
+              title: "Suboutcome 8",
+              key: "8",
               subOutcomeFunding: undefined,
               parent: "Climate",
               depts: ["Dept of Spending", "Dept of Old"],
@@ -240,6 +232,13 @@ export default {
               subOutcomeFunding: undefined,
               parent: "Climate",
               depts: ["Dept of Spending", "Dept of Old"],
+            },
+            {
+              title: "Suboutcome 9",
+              key: "9",
+              subOutcomeFunding: undefined,
+              parent: "Reconciliation",
+              depts: ["Dept of Trends", "Dept of Collection", "Dept of Old"],
             },
           ],
         },
