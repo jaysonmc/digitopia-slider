@@ -22,7 +22,7 @@ export default {
   text-align: center;
   color: #2c3e50;
   background: rgba(248, 248, 248, 1);
-  padding: 5rem 0;
+  padding: 6rem 0;
 }
 #app img {
   border: 1px solid rgba(200, 200, 200, 1);

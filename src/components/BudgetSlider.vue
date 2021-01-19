@@ -21,12 +21,18 @@
               {{ computedOutcomeBudget }} million
             </b-input-group-append>
           </b-input-group>
-          <b-input-group v-if="showAnalysis" prepend="Improved by" append="%">
-            <b-form-input v-model="computeOutcome" readonly></b-form-input>
-          </b-input-group>
-          <b-input-group  v-if="showAnalysis" prepend="Rate of change">
-            <b-form-input v-model="rateOfChange" readonly></b-form-input>
-          </b-input-group>
+          <div class="flex-grid">
+            <div class="flex-grid-item half">
+              <b-input-group v-if="showAnalysis" prepend="Improved by" append="%">
+                <b-form-input v-model="computeOutcome" readonly></b-form-input>
+              </b-input-group>
+            </div>
+            <div class="flex-grid-item half">
+              <b-input-group  v-if="showAnalysis" prepend="Rate of change">
+                <b-form-input v-model="rateOfChange" readonly></b-form-input>
+              </b-input-group>
+            </div>
+          </div>
           <sub-budget-slider 
             v-for="(item, index) in this.subOutcomes"
             :key="item.key"
@@ -188,7 +194,30 @@ h2 {
   margin-bottom: 5px;
 }
 .input-group {
-  margin: 0 0 1rem 0;
+  margin: 0 0 2rem 0;
+}
+.flex-grid {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.flex-grid-item {
+  flex: 1;
+}
+@media screen and (min-width: 40em) {
+  .flex-grid {
+    flex-direction: initial;
+  }
+  .flex-grid-item.half {
+    flex: calc(100% / 2);
+    padding: 0 .5rem 0 0;
+  }
+  .flex-grid-item.half:nth-child(odd) {
+    padding: 0 1rem 0 0;
+  }
+  .flex-grid-item.half:nth-child(even) {
+    padding: 0 0 0 1rem;
+  }
 }
 .input-group .input-group-prepend .input-group-text {
   background: rgba(216, 230, 251, 1);
