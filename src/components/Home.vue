@@ -2,39 +2,45 @@
   <div class="container">
     <h1>Value Stream Comparative Analysis</h1>
     <div id="div-budget">
-      <b-input-group prepend="Budget ($)" append="million" class="mt-3">
-        <b-form-input v-model="budget"> {{ this.budget }}</b-form-input>
-      </b-input-group>
-      <b-input-group
-        id="totalSpent"
-        prepend="Total spent ($)"
-        append="million"
-        class="mt-3"
-      >
-        <b-form-input v-model="totalSpent" readonly></b-form-input>
-      </b-input-group>
-      <div class="row checkbox-div">
-        <b-form-checkbox
-          id="checkbox-freeze-spending"
-          v-model="freezeSpending"
-          name="checkbox-freeze-spending"
-          value="frozen"
-          unchecked-value="not_frozen"
-        >
-          Freeze spending
-        </b-form-checkbox>
-      </div>
-      <div class="row checkbox-div">
-        <b-form-checkbox
-          id="checkbox-analysis"
-          v-model="showAnalysis"
-          name="checkbox-analysis"
-          value="analysis"
-          unchecked-value="no_analysis"
-          @change="setAnalysis()"
-        >
-          Analysis
-        </b-form-checkbox>
+      <div class="flex-grid">
+        <div class="flex-grid-item large">
+          <b-input-group prepend="Budget ($)" append="million" class="mt-3">
+            <b-form-input v-model="budget"> {{ this.budget }}</b-form-input>
+          </b-input-group>
+        </div>
+        <div class="flex-grid-item small">
+          <b-input-group
+            id="totalSpent"
+            prepend="Total spent ($)"
+            append="million"
+            class="mt-3"
+          >
+            <b-form-input v-model="totalSpent" readonly></b-form-input>
+          </b-input-group>
+        </div>
+        <div class="flex-grid-item tiny">
+          <b-form-checkbox
+            id="checkbox-freeze-spending"
+            v-model="freezeSpending"
+            name="checkbox-freeze-spending"
+            value="frozen"
+            unchecked-value="not_frozen"
+          >
+            Freeze spending
+          </b-form-checkbox>
+        </div>
+        <div class="flex-grid-item tiny">
+          <b-form-checkbox
+            id="checkbox-analysis"
+            v-model="showAnalysis"
+            name="checkbox-analysis"
+            value="analysis"
+            unchecked-value="no_analysis"
+            @change="setAnalysis()"
+          >
+            Analysis
+          </b-form-checkbox>
+        </div>
       </div>
       <div class="row checkbox-div">
         <b-form-checkbox
@@ -252,12 +258,38 @@ export default {
 
 <style scoped>
 h1 {
-  margin-top: 15px;
-  margin-bottom: 20px;
+  font-weight: 600;
+  margin: 0 0 5rem 0;
 }
 #totalSpent {
   margin-bottom: 20px;
 }
+.flex-grid {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+.flex-grid-item {
+  flex: 1;
+}
+@media screen and (min-width: 40em) {
+  .flex-grid {
+    flex-direction: initial;
+  }
+  .flex-grid-item.large {
+    flex: calc((100% / 3) * 2);
+    padding: 0 .5rem 0 0;
+  }
+  .flex-grid-item.small {
+    flex: calc(100% / 3);
+    padding: 0 0 0 .5rem;
+  }
+  .flex-grid-item.tiny {
+    flex: calc(100% / 5);
+    max-width: calc(100% / 5);
+    text-align: left;
+  }
+} 
 .checkbox-div {
   margin-left: 0px;
   height: 40px;
