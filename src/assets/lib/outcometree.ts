@@ -72,7 +72,7 @@ export const adjustOutcomeValue = (
 
   let modifiedOutcomeNode: OutcomeNode = rootNode.children.filter(
     (outcome) => outcome.value == inputOutcome
-  )[0];
+  )[0];  
 
   updateOutcome(modifiedOutcomeNode, difference, updatedSuboutcomes);
 
@@ -82,6 +82,7 @@ export const adjustOutcomeValue = (
     (outcome) => outcome.value != inputOutcome
   );
 
+
   otherOutcomes.forEach((outcome) => {
     updateOutcome(
       outcome,
@@ -89,6 +90,40 @@ export const adjustOutcomeValue = (
       updatedSuboutcomes
     );
   });
+};
+
+
+const updateOutcome = (
+  OutcomeNode: OutcomeNode,
+  difference: number,
+  modifiedSuboutcomes: SuboutcomeNode[]
+) => {
+  OutcomeNode.value.outcomeBudget += difference;
+  OutcomeNode.value.key += "1";
+
+    let previouslyUpdatedSuboutcomes: SuboutcomeNode[] = getMatchingSuboutcomes(
+    modifiedSuboutcomes,
+    OutcomeNode.children
+  );
+  
+  OutcomeNode.children.forEach((suboutcomeNode) => {
+    if (!previouslyUpdatedSuboutcomes.includes(suboutcomeNode)) {
+      suboutcomeNode.value.subOutcomeFunding +=
+        difference /
+        (OutcomeNode.children.length - previouslyUpdatedSuboutcomes.length);
+        suboutcomeNode.value.key += "1";
+
+        modifiedSuboutcomes.push(suboutcomeNode); 
+    } else {
+      let previouslyUpdatedSiblingNode : SuboutcomeNode[] = previouslyUpdatedSuboutcomes.filter( previouslyUpdatedSiblingNode => {
+        return previouslyUpdatedSiblingNode.parent !== suboutcomeNode.parent
+      } )
+
+      adjustSuboutcomeValue(suboutcomeNode.value, previouslyUpdatedSiblingNode[0].value.subOutcomeFunding, false)
+    }
+    
+  });
+  
 };
 
 export const adjustSuboutcomeValue = (
@@ -103,11 +138,12 @@ export const adjustSuboutcomeValue = (
   });
 };
 
-const getMatchingSuboutcomes = (array1: Node[], array2: Node[]): Node[] => {
-  let previouslyUpdatedSuboutcomes: Node[] = [];
-  array1.forEach((suboutcomeNode1) => {
-    let foundSuboutcomes: Node[] = array2.filter((suboutcomeNode2) => {
-      suboutcomeNode2 == suboutcomeNode1;
+const getMatchingSuboutcomes = (array1: SuboutcomeNode[], array2: SuboutcomeNode[]): SuboutcomeNode[] => {
+  let previouslyUpdatedSuboutcomes: SuboutcomeNode[] = [];
+
+  array1.forEach( suboutcomeNode1 => {
+    let foundSuboutcomes: SuboutcomeNode[] = array2.filter((suboutcomeNode2) => {
+      return suboutcomeNode2.value.title === suboutcomeNode1.value.title;
     });
 
     if (foundSuboutcomes.length > 1) {
@@ -116,38 +152,13 @@ const getMatchingSuboutcomes = (array1: Node[], array2: Node[]): Node[] => {
       );
     }
 
-    if (foundSuboutcomes.length == 1) {
-      previouslyUpdatedSuboutcomes.push(foundSuboutcomes[0]);
+    if (foundSuboutcomes.length === 1) {
+      previouslyUpdatedSuboutcomes.push(...foundSuboutcomes);
+      previouslyUpdatedSuboutcomes.push(suboutcomeNode1);
     }
   });
+
   return previouslyUpdatedSuboutcomes;
-};
-
-const updateOutcome = (
-  OutcomeNode: OutcomeNode,
-  difference: number,
-  modifiedSuboutcomes: SuboutcomeNode[]
-) => {
-  OutcomeNode.value.outcomeBudget += difference;
-  OutcomeNode.value.key += "1";
-
-  let previouslyUpdatedSuboutcomes: Node[] = getMatchingSuboutcomes(
-    modifiedSuboutcomes,
-    OutcomeNode.children
-  );
-
-  OutcomeNode.children.forEach((suboutcomeNode) => {
-    if (!previouslyUpdatedSuboutcomes.includes(suboutcomeNode)) {
-      let _suboutcomeNode = suboutcomeNode as SuboutcomeNode;
-
-      _suboutcomeNode.value.subOutcomeFunding +=
-        difference /
-        (OutcomeNode.children.length - previouslyUpdatedSuboutcomes.length);
-      _suboutcomeNode.value.key += "1";
-
-      modifiedSuboutcomes.push(_suboutcomeNode);
-    }
-  });
 };
 
 const updateSuboutcomeNode = (
