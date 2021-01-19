@@ -27,6 +27,7 @@ interface Node {
 }
 
 interface OutcomeNode extends Node {
+  children: SuboutcomeNode[];
   value: Outcome;
   parent: RootNode;
 }
@@ -154,6 +155,7 @@ const updateSuboutcomeNode = (
   newValue: number,
   cascade: boolean = false
 ) => {
+  let updatedSiblings : SuboutcomeNode[] = [];
   let suboutcomeNode = node as SuboutcomeNode;
   let difference = newValue - suboutcomeNode.value.subOutcomeFunding;
 
@@ -162,15 +164,28 @@ const updateSuboutcomeNode = (
   suboutcomeNode.value.key = node?.value?.key + "1";
 
   if (cascade) {
-    updateSuboutcomeSiblings(node, difference);
+    updatedSiblings = updateSuboutcomeSiblings(node, difference);
   } else {
     node.parent.value.outcomeBudget += difference;
     node.parent.value.key += "1";
   }
+
+  updatedSiblings.forEach( siblingNode => {
+    let matchingSuboutcomeNodes = <SuboutcomeNode[]>getNodes(siblingNode.value);
+    if (matchingSuboutcomeNodes.length > 1) {
+      let impactedNodes : SuboutcomeNode[] = matchingSuboutcomeNodes.filter( suboutcomeNode => {
+        return suboutcomeNode.parent != node.parent
+      })
+      impactedNodes.forEach( impactedSubOutcomeNode => {
+        updateSuboutcomeNode(impactedSubOutcomeNode, siblingNode.value.subOutcomeFunding, true)
+      })
+    }
+  })
+
 };
 
-const updateSuboutcomeSiblings = (node: SuboutcomeNode, difference: number) => {
-  let siblings: Node[] | undefined = node.parent?.children.filter(
+const updateSuboutcomeSiblings = (node: SuboutcomeNode, difference: number) : SuboutcomeNode[] => {
+  let siblings: SuboutcomeNode[] | undefined = node.parent?.children.filter(
     (lNode) => lNode != node
   );
 
@@ -183,6 +198,8 @@ const updateSuboutcomeSiblings = (node: SuboutcomeNode, difference: number) => {
     siblingNode.value.subOutcomeFunding -= delta;
     siblingNode.value.key += "1";
   });
+
+  return siblings
 };
 
 const addOutcome = (outcome: Outcome) => {
