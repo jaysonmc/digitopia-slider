@@ -2,12 +2,13 @@
   <div class="container">
     <div class="row">
       <b-input-group id="sub-slider-input-group">
-        <b-input-group-prepend is-text class="text-monospace">
+        <b-input-group-prepend is-text class="subgroup-title">
           {{ title }} funding
         </b-input-group-prepend>
         <b-form-input
           id="bg-opacity"
           :value="computeSubOutcomeFunding"
+          class="subgroup-slider"
           type="range"
           number
           min="0"
@@ -90,6 +91,21 @@ export default {
 </script>
 
 <style scoped>
+.subgroup-title >div {
+  background: none;
+  border: none;
+  font-family: sans-serif;
+  /* font-weight: 600; */
+  margin: 1rem 0 .5rem;
+  padding: 0;
+  text-align: left;
+}
+
+.subgroup-slider {
+  border-top-left-radius: 0.25rem !important;
+  border-bottom-left-radius: 0.25rem !important;
+}
+
 #sub-slider-input-group {
   width: 100%;
   margin-top: 1rem;
