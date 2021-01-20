@@ -195,7 +195,7 @@ h2 {
   margin-bottom: 5px;
 }
 .input-group {
-  margin: 0 0 2rem 0;
+  margin: 0 0 1rem 0;
 }
 .flex-grid {
   display: flex;

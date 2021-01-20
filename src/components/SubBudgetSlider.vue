@@ -92,7 +92,7 @@ export default {
 <style scoped>
 #sub-slider-input-group {
   width: 100%;
-  margin-top: 0.25rem;
+  margin-top: 1rem;
   margin-bottom: 0.25rem;
 }
 
@@ -107,13 +107,6 @@ export default {
 }
 
 .dept-list-item {
-  /* background: rgba(216, 230, 251, 1);
-  border: 1px solid #007bff !important;
-  border-radius: 25rem !important;
-  display: inline-block;
-  font-size: .8rem;
-  margin: 0 .25rem 0 0;
-  padding: .25rem 1rem; */
   background: none !important;
   border: none !important;
   color: #007bff;
