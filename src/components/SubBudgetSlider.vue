@@ -21,9 +21,14 @@
       </b-input-group>
     </div>
     <div v-if="showDepts" class="row">
-      <b-list-group>
-        <b-list-group-item v-for="(dept, index) in this.depts" :key="index">
-          {{ dept }}
+      <b-list-group class="dept-list">
+        Departments:
+        <b-list-group-item
+          class="dept-list-item"
+          v-for="(dept, index) in this.depts"
+          :key="index"
+        >
+          {{ dept }},
         </b-list-group-item>
       </b-list-group>
     </div>
@@ -91,8 +96,31 @@ export default {
   margin-bottom: 0.25rem;
 }
 
-.row .list-group {
-  padding-bottom: 10px;
+.dept-list {
+  border-radius: 0;
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0 1.5rem 0;
+  text-align: left;
+  width: 100%;
+}
+
+.dept-list-item {
+  /* background: rgba(216, 230, 251, 1);
+  border: 1px solid #007bff !important;
+  border-radius: 25rem !important;
+  display: inline-block;
+  font-size: .8rem;
+  margin: 0 .25rem 0 0;
+  padding: .25rem 1rem; */
+  background: none !important;
+  border: none !important;
+  color: #007bff;
+  display: inline-block;
+  font-weight: 400;
+  margin: 0 0.2rem 0 0;
+  padding: 0;
 }
 
 div#sub-slider-input-group .input-group-prepend {
