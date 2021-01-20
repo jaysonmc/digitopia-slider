@@ -41,18 +41,18 @@
             Analysis
           </b-form-checkbox>
         </div>
-      </div>
-      <div class="row checkbox-div">
-        <b-form-checkbox
-          id="checkbox-depts"
-          v-model="showDepts"
-          name="checkbox-depts"
-          value="show_depts"
-          unchecked-value="hide_depts"
-          @change="setShowDepartments()"
-        >
-          Show Departments
-        </b-form-checkbox>
+        <div class="flex-grid-item tiny">
+          <b-form-checkbox
+            id="checkbox-depts"
+            v-model="showDepts"
+            name="checkbox-depts"
+            value="show_depts"
+            unchecked-value="hide_depts"
+            @change="setShowDepartments()"
+          >
+            Show Departments
+          </b-form-checkbox>
+        </div>
       </div>
       <budget-slider
         v-for="(item, index) in this.outcomes"
@@ -279,13 +279,17 @@ h1 {
     flex: calc((100% / 3) * 2);
     padding: 0 .5rem 0 0;
   }
+  .flex-grid-item.half {
+    flex: calc(100% / 2);
+    padding: 0 .5rem 0 0;
+  }
   .flex-grid-item.small {
     flex: calc(100% / 3);
     padding: 0 0 0 .5rem;
   }
   .flex-grid-item.tiny {
-    flex: calc(100% / 5);
-    max-width: calc(100% / 5);
+    flex: none;
+    padding: 0 1rem 0 0;
     text-align: left;
   }
 } 
