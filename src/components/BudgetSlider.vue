@@ -1,46 +1,46 @@
 <template>
   <div>
-      <div>
-        <h2>{{title}}</h2>
-        <b-form-group>
-          <b-input-group>
-            <b-input-group-prepend is-text class="text-monospace">
-              Funding
-            </b-input-group-prepend>
-            <b-form-input
-              id="bg-opacity"
-              :value="computedOutcomeBudget"
-              type="range"
-              number
-              min="0"
-              :max="budget"
-              step="0.01"
-              @change="computeBudget(outcomeBudget, $event)"
-            ></b-form-input>
-            <b-input-group-append is-text class="text-monospace">
-              {{ computedOutcomeBudget }} million
-            </b-input-group-append>
-          </b-input-group>
-          <b-input-group v-if="showAnalysis" prepend="Improved by" append="%">
-            <b-form-input v-model="computeOutcome" readonly></b-form-input>
-          </b-input-group>
-          <b-input-group  v-if="showAnalysis" prepend="Rate of change">
-            <b-form-input v-model="rateOfChange" readonly></b-form-input>
-          </b-input-group>
-          <sub-budget-slider 
-            v-for="(item, index) in this.subOutcomes"
-            :key="item.key"
-            :suboutcomeProp="item"
-            :outcomeFunding="outcomeBudget"
-            :oneOf="subOutcomes.length"
-            :index="index"
-            @compute-sub-budgets="computeSubBudgets"
-            ref="subslider"
-          >
-          </sub-budget-slider>
-        </b-form-group>
-      </div>
+    <div>
+      <h2>{{ title }}</h2>
+      <b-form-group>
+        <b-input-group>
+          <b-input-group-prepend is-text class="text-monospace">
+            Funding
+          </b-input-group-prepend>
+          <b-form-input
+            id="bg-opacity"
+            :value="computedOutcomeBudget"
+            type="range"
+            number
+            min="0"
+            :max="budget"
+            step="0.01"
+            @change="computeBudget(outcomeBudget, $event)"
+          ></b-form-input>
+          <b-input-group-append is-text class="text-monospace">
+            {{ computedOutcomeBudget }} million
+          </b-input-group-append>
+        </b-input-group>
+        <b-input-group v-if="showAnalysis" prepend="Improved by" append="%">
+          <b-form-input v-model="computeOutcome" readonly></b-form-input>
+        </b-input-group>
+        <b-input-group v-if="showAnalysis" prepend="Rate of change">
+          <b-form-input v-model="rateOfChange" readonly></b-form-input>
+        </b-input-group>
+        <sub-budget-slider
+          v-for="(item, index) in this.subOutcomes"
+          :key="item.key"
+          :suboutcomeProp="item"
+          :outcomeFunding="outcomeBudget"
+          :oneOf="subOutcomes.length"
+          :index="index"
+          @compute-sub-budgets="computeSubBudgets"
+          ref="subslider"
+        >
+        </sub-budget-slider>
+      </b-form-group>
     </div>
+  </div>
 </template>
 
 <script>
@@ -55,10 +55,9 @@ export default {
     budget: Number,
     index: Number,
     totalOutcomes: Number,
-    outcomeProp : 
-    {
+    outcomeProp: {
       title: String,
-      outcomeBudget: Number,  
+      outcomeBudget: Number,
       verticalScaleValue: Number,
       horizontalScaleValue: Number,
       computedOutcome: null | Number,
@@ -68,9 +67,9 @@ export default {
         key: String,
         subOutcomeFunding: Number | undefined,
         parent: String,
-        depts: Array
-      }
-    }
+        depts: Array,
+      },
+    },
   },
   data() {
     return {
@@ -81,49 +80,50 @@ export default {
       showAnalysis: false,
       outcome: this.outcomeProp,
       subOutcomes: this.outcomeProp.subOutcomes,
-      depts: this.outcomeProp.subOutcomes.depts
-    }
+      depts: this.outcomeProp.subOutcomes.depts,
+    };
   },
   methods: {
     tanh() {
+      let x = this.outcomeBudget;
+      let vs = this.vs;
+      let hs = this.hs;
 
-      let x = this.outcomeBudget
-      let vs = this.vs
-      let hs = this.hs
-
-      const reVal = (hs * ( this.tanhNumerator(x, vs) / this.tanhDenominator(x, vs) ))
-      return reVal
+      const reVal =
+        hs * (this.tanhNumerator(x, vs) / this.tanhDenominator(x, vs));
+      return reVal;
     },
-    tanhNumerator (x, vs) {
-      return Math.exp(vs*x)-1
+    tanhNumerator(x, vs) {
+      return Math.exp(vs * x) - 1;
     },
-    tanhDenominator (x, vs) {
-      return Math.exp(vs*x)+1
+    tanhDenominator(x, vs) {
+      return Math.exp(vs * x) + 1;
     },
     tanhPrime() {
-
-      let x = this.outcomeBudget
-      let vs = this.vs
-      let hs = this.hs
+      let x = this.outcomeBudget;
+      let vs = this.vs;
+      let hs = this.hs;
 
       // conveniently, the numerator and denominator have the same derivative
-      let derivative = vs * Math.exp(vs*x);
+      let derivative = vs * Math.exp(vs * x);
 
-      let quotientRuleNumerator = (derivative * this.tanhDenominator(x, vs)) - (this.tanhNumerator(x, vs) * derivative)
-      let quotientRuleDenominator = Math.pow(this.tanhDenominator(x, vs), 2)
+      let quotientRuleNumerator =
+        derivative * this.tanhDenominator(x, vs) -
+        this.tanhNumerator(x, vs) * derivative;
+      let quotientRuleDenominator = Math.pow(this.tanhDenominator(x, vs), 2);
 
-      return hs * (quotientRuleNumerator / quotientRuleDenominator)
+      return hs * (quotientRuleNumerator / quotientRuleDenominator);
     },
     computeBudget: function(oldVal, newVal) {
       var retObj = {
         newOutcomeFunding: newVal,
-        index: this.index
-      }
+        index: this.index,
+      };
 
-      this.$emit('compute-budget', retObj)
+      this.$emit("compute-budget", retObj);
     },
     setAnalysis(bool) {
-      this.showAnalysis = bool
+      this.showAnalysis = bool;
     },
     setShowDepts(bool) {
       this.$refs.subslider.forEach((component) => {
@@ -131,41 +131,42 @@ export default {
       });
     },
     computeSubBudgets(retObj) {
-      retObj.adjustedSuboutcome = this.subOutcomes[retObj.index]
-      this.$emit('adjust-sub-budgets', retObj)
-    }
+      retObj.adjustedSuboutcome = this.subOutcomes[retObj.index];
+      this.$emit("adjust-sub-budgets", retObj);
+    },
   },
   computed: {
-    computeOutcome : function()  {
-        var retObj = {
-          computedOutcome: this.tanh(),
-          index: this.index
-        }
+    computeOutcome: function() {
+      var retObj = {
+        computedOutcome: this.tanh(),
+        index: this.index,
+      };
 
-        this.$emit('computed-outcome', retObj)
-        return (retObj.computedOutcome * 100).toFixed(2)
+      this.$emit("computed-outcome", retObj);
+      return (retObj.computedOutcome * 100).toFixed(2);
     },
     rateOfChange: function() {
-      return this.tanhPrime()
+      return this.tanhPrime();
     },
     computedOutcomeBudget: function() {
-      return parseFloat(this.outcomeBudget).toFixed(2)
-    }
+      return parseFloat(this.outcomeBudget).toFixed(2);
+    },
   },
   mounted() {
     if (!this.outcomeProp.outcomeBudget) {
-      this.outcomeBudget = this.budget / this.totalOutcomes
+      this.outcomeBudget = this.budget / this.totalOutcomes;
     }
   },
-  updated() {      
-    this.subOutcomes.map( suboutcome => {
-
+  updated() {
+    this.subOutcomes.map((suboutcome) => {
       if (!suboutcome.subOutcomeFunding) {
-        suboutcome.subOutcomeFunding = parseFloat(this.$props.outcomeProp.outcomeBudget / this.subOutcomes.length)
-        suboutcome.key += 1
-      } 
-    })
-  }
+        suboutcome.subOutcomeFunding = parseFloat(
+          this.$props.outcomeProp.outcomeBudget / this.subOutcomes.length
+        );
+        suboutcome.key += 1;
+      }
+    });
+  },
 };
 </script>
 

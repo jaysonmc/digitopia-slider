@@ -22,11 +22,8 @@
     </div>
     <div v-if="showDepts" class="row">
       <b-list-group>
-        <b-list-group-item 
-          v-for="(dept, index) in this.depts"
-          :key="index"
-        > 
-          {{ dept }} 
+        <b-list-group-item v-for="(dept, index) in this.depts" :key="index">
+          {{ dept }}
         </b-list-group-item>
       </b-list-group>
     </div>
@@ -45,8 +42,8 @@ export default {
       key: String,
       subOutcomeFunding: Number | undefined,
       parent: String,
-      depts: Array
-    }
+      depts: Array,
+    },
   },
   data() {
     return {
@@ -55,48 +52,55 @@ export default {
       depts: this.suboutcomeProp.depts,
       subOutcomeFunding: this.suboutcomeProp.subOutcomeFunding,
       showDepts: false,
-    }
+    };
   },
   computed: {
-    computeSubOutcomeFunding : function()  {
-        if (this.subOutcomeFunding) {
-          return parseFloat(this.subOutcomeFunding).toFixed(2)
-        }
-        return 0
+    computeSubOutcomeFunding: function() {
+      if (this.subOutcomeFunding) {
+        return parseFloat(this.subOutcomeFunding).toFixed(2);
+      }
+      return 0;
     },
   },
   methods: {
     computeSubBudgets: function(oldVal, newVal) {
-      newVal = parseFloat(newVal)
+      newVal = parseFloat(newVal);
 
       var retObj = {
         oldOutcomeFunding: oldVal,
         newOutcomeFunding: newVal,
         sourceOutcome: this.parent,
         index: this.index,
-        difference: newVal - oldVal
-      }
+        difference: newVal - oldVal,
+      };
 
-      this.$emit('compute-sub-budgets', retObj)
+      this.$emit("compute-sub-budgets", retObj);
     },
     setShowDepts(bool) {
-      this.showDepts = bool
+      this.showDepts = bool;
     },
   },
-  mounted() {
-  }
+  mounted() {},
 };
 </script>
 
 <style scoped>
 #sub-slider-input-group {
   width: 100%;
-  margin-top: .25rem;
-  margin-bottom: .25rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .row .list-group {
   padding-bottom: 10px;
 }
 
+div#sub-slider-input-group .input-group-prepend {
+  display: block;
+  width: 100%;
+}
+
+div#sub-slider-input-group .input-group-prepend .input-group-text {
+  white-space: inherit;
+}
 </style>

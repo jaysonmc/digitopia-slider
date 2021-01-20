@@ -139,7 +139,8 @@ export default {
           key: 1,
           subOutcomes: [
             {
-              title: "Suboutcome 1",
+              title:
+                "Increase Indigenous Peoples’ participation on government contracts",
               key: "1",
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
@@ -150,7 +151,8 @@ export default {
               ],
             },
             {
-              title: "Suboutcome 2",
+              title:
+                "Dismantle systemic inequities in the criminal justice system",
               key: "2",
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
@@ -161,7 +163,8 @@ export default {
               ],
             },
             {
-              title: "Suboutcome 3",
+              title:
+                "Increase representation of women, Black and racialized Canadians, persons with disabilities, Indigenous Peoples and LGBTQ2 Canadians in hiring, appointments and leadership development within the Public Service",
               key: "3",
               subOutcomeFunding: undefined,
               parent: "Reconciliation",
@@ -178,21 +181,24 @@ export default {
           key: 2,
           subOutcomes: [
             {
-              title: "Suboutcome 3",
+              title:
+                "Increase representation of women, Black and racialized Canadians, persons with disabilities, Indigenous Peoples and LGBTQ2 Canadians in hiring, appointments and leadership development within the Public Service",
               key: "3",
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
               depts: ["Dept of Rule Setting", "Dept of Departments"],
             },
             {
-              title: "Suboutcome 4",
+              title:
+                "Increase women-owned businesses’ access to the financing and expertise they need to address the disproportionate impact of the COVID-19 economic crisis on women business owners",
               key: "4",
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
               depts: ["Dept of Old", "Dept of Collection"],
             },
             {
-              title: "Suboutcome 7",
+              title:
+                "Increase gender equality, diversity and inclusion in Canadian companies",
               key: "7",
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
@@ -213,26 +219,29 @@ export default {
           key: 3,
           subOutcomes: [
             {
-              title: "Suboutcome 8",
+              title:
+                "Reduce greenhouse gas emissions from government operations to net-zero",
               key: "8",
               subOutcomeFunding: undefined,
               parent: "Climate",
               depts: ["Dept of Spending", "Dept of Old"],
             },
             {
-              title: "Suboutcome 5",
+              title: "Eliminate plastic pollution in Canada",
               key: "5",
               subOutcomeFunding: undefined,
               parent: "Climate",
               depts: ["Dept of Rule Setting", "Dept of Collection"],
             },
             {
-              title: "Suboutcome 6",
+              title:
+                "Transform Canada’s manufacturing, transportation, natural resource and energy sectors to net-zero emissions",
               key: "6",
               subOutcomeFunding: undefined,
               parent: "Climate",
               depts: ["Dept of Spending", "Dept of Old"],
             },
+            /*
             {
               title: "Suboutcome 9",
               key: "9",
@@ -240,6 +249,7 @@ export default {
               parent: "Reconciliation",
               depts: ["Dept of Trends", "Dept of Collection", "Dept of Old"],
             },
+            */
           ],
         },
       ],
@@ -277,18 +287,18 @@ h1 {
   }
   .flex-grid-item.large {
     flex: calc((100% / 3) * 2);
-    padding: 0 .5rem 0 0;
+    padding: 0 0.5rem 0 0;
   }
   .flex-grid-item.small {
     flex: calc(100% / 3);
-    padding: 0 0 0 .5rem;
+    padding: 0 0 0 0.5rem;
   }
   .flex-grid-item.tiny {
     flex: calc(100% / 5);
     max-width: calc(100% / 5);
     text-align: left;
   }
-} 
+}
 .checkbox-div {
   margin-left: 0px;
   height: 40px;
