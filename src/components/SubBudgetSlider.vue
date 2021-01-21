@@ -3,7 +3,7 @@
     <div class="row">
       <b-input-group id="sub-slider-input-group">
         <b-input-group-prepend is-text class="subgroup-title">
-          {{ title }} funding
+          Funding stream to: {{ title }}
         </b-input-group-prepend>
         <b-form-input
           id="bg-opacity"
@@ -95,7 +95,6 @@ export default {
   background: none;
   border: none;
   font-family: sans-serif;
-  /* font-weight: 600; */
   margin: 1rem 0 .5rem;
   padding: 0;
   text-align: left;
