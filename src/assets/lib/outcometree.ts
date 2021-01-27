@@ -76,20 +76,30 @@ export const adjustOutcomeValue = (
 
   updateOutcome(modifiedOutcomeNode, difference, updatedSuboutcomes);
 
-  if (!cascade) return;
-
-  let otherOutcomes = rootNode.children.filter(
-    (outcome) => outcome.value != inputOutcome
-  );
-
-
-  otherOutcomes.forEach((outcome) => {
-    updateOutcome(
-      outcome,
-      -(difference / (rootNode.children.length - 1)),
-      updatedSuboutcomes
+  if (cascade) {
+    let otherOutcomes = rootNode.children.filter(
+      (outcome) => outcome.value != inputOutcome
     );
-  });
+
+    otherOutcomes.forEach((outcome) => {
+      updateOutcome(
+        outcome,
+        -(difference / (rootNode.children.length - 1)),
+        updatedSuboutcomes
+      );
+    });
+  } else {
+    updatedSuboutcomes.forEach(updatedSuboutcome => {
+      let matchingSuboutcome : SuboutcomeNode[] = getMatchingSuboutcome(updatedSuboutcome)
+      if (matchingSuboutcome.length > 0) {
+        matchingSuboutcome.forEach( matchingSuboutcome => {
+          adjustSuboutcomeValue(matchingSuboutcome.value, updatedSuboutcome.value.subOutcomeFunding, true)
+        })
+        
+      }
+    })
+    
+  }
 };
 
 
@@ -276,6 +286,17 @@ const getNodes = (input: Suboutcome | Outcome | null): Node[] => {
 
   return matchingNodes;
 };
+
+const getMatchingSuboutcome = (inputSuboutcomeNode : SuboutcomeNode) : SuboutcomeNode[] => {
+
+  let matchingNodes = getNodes(inputSuboutcomeNode.value) as SuboutcomeNode[]
+
+  matchingNodes = matchingNodes.filter(iterSuboutcomeNode => {
+    return iterSuboutcomeNode.parent.value.title !== inputSuboutcomeNode.parent.value.title
+  })
+
+  return matchingNodes
+}
 
 const printTree = () => {
   rootNode.children.forEach((node) => {

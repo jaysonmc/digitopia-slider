@@ -186,7 +186,7 @@ export default {
               key: "3",
               subOutcomeFunding: undefined,
               parent: "Diversity and inclusion",
-              depts: ["Dept of Rule Setting", "Dept of Departments"],
+              depts: ["Dept of Trends", "Dept of Rule Setting"],
             },
             {
               title:
@@ -241,15 +241,6 @@ export default {
               parent: "Climate",
               depts: ["Dept of Spending", "Dept of Old"],
             },
-            /*
-            {
-              title: "Suboutcome 9",
-              key: "9",
-              subOutcomeFunding: undefined,
-              parent: "Reconciliation",
-              depts: ["Dept of Trends", "Dept of Collection", "Dept of Old"],
-            },
-            */
           ],
         },
       ],
